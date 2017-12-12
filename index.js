@@ -26,22 +26,36 @@ const load = async function(self) {
 
   const opts = loaderUtils.getOptions(self);
   const release = (opts && opts.hasOwnProperty('release')) ? opts['release'] : false;
+  const gc = (opts && opts.hasOwnProperty('gc')) ? opts['gc'] : false;
   const target = (opts && opts.hasOwnProperty('target')) ? opts['target'] : 'wasm32-unknown-unknown';
 
   const cmd = `cargo build --message-format=json --target=${target}${release ? ' --release' : ''}`;
 
   const result = await execAsync(cmd, {cwd: srcDir});
 
+  let wasmFile;
   for (let line of result.stdout.split(os.EOL)) {
+    if (/^\s*$/.test(line)) {
+      continue;
+    }
     const data = JSON.parse(line);
     if (data.hasOwnProperty('filenames')) {
-      const wasmFile = data['filenames'].find((p) => p.endsWith('.wasm'));
-      if (wasmFile) {
-        return await fse.readFile(wasmFile);
-      }
+      wasmFile = data['filenames'].find((p) => p.endsWith('.wasm'));
+      break;
     }
   }
-  throw new Error('No wasm file produced as build output', null);
+
+  if (!wasmFile) {
+    throw new Error('No wasm file produced as build output', null);
+  }
+
+  if (gc) {
+    let gcWasmFile = wasmFile.substr(0, wasmFile.length - '.wasm'.length) + '.gc.wasm';
+    await execAsync(`wasm-gc ${wasmFile} ${gcWasmFile}`);
+    wasmFile = gcWasmFile;
+  }
+
+  return await fse.readFile(wasmFile);
 };
 
 module.exports = async function() {

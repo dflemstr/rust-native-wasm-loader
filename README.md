@@ -53,6 +53,8 @@ loadWasm().then(result => {
 
 ### Available loader options
 
+  - `gc`: `boolean`; whether to run `wasm-gc` on the WebAssembly output.  Reduces binary size but
+    requires installing [wasm-gc][].
   - `release`: `boolean`; whether to compile the WebAssembly module in debug or release mode;
     defaults to `false`.
   - `target`: `string`; the Rust target to use; this defaults to `wasm32-unknown-unknown`
@@ -139,3 +141,4 @@ loadAdd().then(result => {
 ```
 
 [rustup.rs]: https://rustup.rs/
+[wasm-gc]: https://github.com/alexcrichton/wasm-gc
