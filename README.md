@@ -90,6 +90,13 @@ pub fn add(a: i32, b: i32) -> i32 {
 }
 ```
 
+Then, specify that your Rust library should be a `cdylib` in `Cargo.toml`:
+
+```toml
+[lib]
+crate-type = ["cdylib"]
+```
+
 Now you can actually start to use this loader.  This loader itself does not create Javascript code
 for loading a WebAssembly module, so you need to compose it with another loader, like `wasm-loader`:
 
