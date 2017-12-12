@@ -5,9 +5,12 @@ support for compiling to `wasm32` and does not require Emscripten.
 
 ## Usage
 
+If you already know how to use Rust and Webpack, read the "Short version" of this section.  If you
+want a full example, read the "Long version."
+
 ### Short version
 
-Add both this loader and `wasm-loader` to your Webpack loaders:
+Add both this loader and `wasm-loader` to your Webpack loaders in `webpack.config.js`:
 
 ```js
 module.exports = {
@@ -30,10 +33,17 @@ module.exports = {
 }
 ```
 
-Then, you can import your `#[no_mangle]`d Rust functions from your Rust Cargo library:
+Then, specify that your Rust library should be a `cdylib` in `Cargo.toml`:
+
+```toml
+[lib]
+crate-type = ["cdylib"]
+```
+
+Now you can import any functions marked with `#[no_mangle]` as WebAssembly functions:
 
 ```js
-import loadWasm from './lib.rs'
+import loadWasm from './path/to/rustlib/src/lib.rs'
 
 loadWasm().then(result => {
   const add = result.instance.exports['add'];
@@ -41,7 +51,7 @@ loadWasm().then(result => {
 });
 ```
 
-### Available options
+### Available loader options
 
   - `release`: `boolean`; whether to compile the WebAssembly module in debug or release mode;
     defaults to `false`.
