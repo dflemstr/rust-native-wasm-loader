@@ -1,6 +1,6 @@
 {
   "name": "rust-native-wasm-loader",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A webpack loader for Rust wasm libraries (without requiring emscripten)",
   "main": "dist/index.js",
   "repository": "https://github.com/dflemstr/rust-native-wasm-loader",
