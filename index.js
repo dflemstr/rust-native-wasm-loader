@@ -7,7 +7,7 @@ import path from 'path';
 const findSrcDir = async function(childPath) {
   let candidate = childPath;
 
-  while (candidate) {
+  while (candidate !== path.parse(candidate).root) {
     const maybeCargoFile = path.join(candidate, 'Cargo.toml');
     if (await fse.pathExists(maybeCargoFile)) {
       break;
