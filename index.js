@@ -10,12 +10,12 @@ const findSrcDir = async function(childPath) {
   while (candidate !== path.parse(candidate).root) {
     const maybeCargoFile = path.join(candidate, 'Cargo.toml');
     if (await fse.pathExists(maybeCargoFile)) {
-      break;
+      return candidate;
     }
     candidate = path.dirname(candidate);
   }
 
-  return candidate;
+  return null;
 };
 
 const load = async function(self) {
