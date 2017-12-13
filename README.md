@@ -147,5 +147,13 @@ loadAdd().then(result => {
 });
 ```
 
+You can now run webpack and the resulting code from node.js or a browser:
+
+```text
+$ yarn run webpack
+$ node dist/index.js
+return value was 5
+```
+
 [rustup.rs]: https://rustup.rs/
 [wasm-gc]: https://github.com/alexcrichton/wasm-gc
