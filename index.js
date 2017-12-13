@@ -58,7 +58,7 @@ const load = async function(self) {
   return await fse.readFile(wasmFile);
 };
 
-module.exports = async function() {
+module.exports = function() {
   const callback = this.async();
   load(this).then(r => callback(null, r), e => callback(e, null));
 };
