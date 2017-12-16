@@ -41,7 +41,9 @@ const load = async function(self) {
     const data = JSON.parse(line);
     if (data.hasOwnProperty('filenames')) {
       wasmFile = data['filenames'].find((p) => p.endsWith('.wasm'));
-      break;
+      if (wasmFile) {
+        break;
+      }
     }
   }
 
