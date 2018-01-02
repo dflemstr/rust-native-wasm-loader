@@ -155,5 +155,30 @@ $ node dist/index.js
 return value was 5
 ```
 
+### `cargo-web` experimental support
+
+You can use experimental `cargo-web` support with the following options:
+
+```json
+{
+  loader: 'rust-native-wasm-loader',
+  options: {
+    cargoWeb: true,
+    name: 'static/wasm/[name].[hash:8].wasm'
+  }
+}
+```
+
+The loader now uses `cargo-web` to build the project, and as a result needs to emit the wasm file
+separately.  The loader now returns a normal Javascript module that can be loaded like so:
+
+```js
+import loadWasm from './path/to/rustlib/src/lib.rs'
+
+loadWasm().then(module => {
+  console.log('return value was', module.add(2, 3));
+});
+```
+
 [rustup.rs]: https://rustup.rs/
 [wasm-gc]: https://github.com/alexcrichton/wasm-gc

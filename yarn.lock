@@ -53,6 +53,10 @@ array-unique@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.2.1.tgz#a1d97ccafcbc2625cc70fadceb36a50c58b01a53"
 
+arraybuffer-to-string@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/arraybuffer-to-string/-/arraybuffer-to-string-1.0.1.tgz#57abcb5e4c4948e4ed104a3119038a36a3d4fd94"
+
 asn1@~0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/asn1/-/asn1-0.2.3.tgz#dac8787713c9966849fc8180777ebe9c1ddf3b86"
@@ -1574,10 +1578,6 @@ tar@^2.2.1:
 to-fast-properties@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"
-
-toml@^2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/toml/-/toml-2.3.3.tgz#8d683d729577cb286231dfc7a8affe58d31728fb"
 
 tough-cookie@~2.3.0:
   version "2.3.3"
