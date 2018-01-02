@@ -159,7 +159,7 @@ return value was 5
 
 You can use experimental `cargo-web` support with the following options:
 
-```json
+```js
 {
   loader: 'rust-native-wasm-loader',
   options: {
