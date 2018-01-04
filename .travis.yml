@@ -3,6 +3,7 @@ node_js: 8
 cache: yarn
 
 before_install:
+  - export PATH="$HOME/.cargo/bin:$PATH"
   - curl https://sh.rustup.rs -sSf | sh -s -- -y
   - rustup toolchain install nightly
   - rustup default nightly
