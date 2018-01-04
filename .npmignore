@@ -1,2 +1,3 @@
-index.js
+src/
+test/
 yarn.lock

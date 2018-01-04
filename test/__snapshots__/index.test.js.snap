@@ -1,0 +1,604 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rust-native-wasm-loader loads a cargo-web project 1`] = `
+Array [
+  "import loadWasm from './mystdweblib/src/main.rs';
+
+loadWasm().then(result => {
+  console.log(result.add(1, 2));
+});
+",
+  "\\"use strict\\";
+
+if( typeof Rust === 'undefined' ) {
+    var Rust = {};
+}
+
+(function( root, factory ) {
+    if( typeof define === \\"function\\" && define.amd ) {
+        define( [], factory );
+    } else if( typeof module === \\"object\\" && module.exports ) {
+        module.exports = factory();
+    } else {
+        factory();
+    }
+}( this, function() {
+    const Module = {};
+    let HEAP8 = null;
+    let HEAP16 = null;
+    let HEAP32 = null;
+    let HEAPU8 = null;
+    let HEAPU16 = null;
+    let HEAPU32 = null;
+    let HEAPF32 = null;
+    let HEAPF64 = null;
+
+    Object.defineProperty( Module, 'nodejs', { value: (typeof window === 'undefined') } );
+    Object.defineProperty( Module, 'exports', { value: {} } );
+
+    const __imports = {
+        env: {
+            \\"__extjs_ff2c75b4783fd5c9d8c934bbd4a03e66527e05e4\\": function($0) {
+                Module.STDWEB.tmp = Module.STDWEB.to_js( $0 );
+            },
+            \\"__extjs_de942ef9ccd064c41dc92d5b5bf83c61aeb00278\\": function($0) {
+                Module.STDWEB.increment_refcount( $0 );
+            },
+            \\"__extjs_d8a439451216bbc6cd9f3012f189d2ad6a2e9459\\": function($0) {
+                Module.STDWEB.decrement_refcount( $0 );
+            },
+            \\"__extjs_304d8c32ad002d59ca64cbdf9d3979178b241ed1\\": function($0, $1) {
+                $1 = Module.STDWEB.to_js($1);Module.STDWEB.from_js($0, (function(){Module.exports.add = ($1);})());
+            },
+            \\"__extjs_d0f9580b9cfe82e2ee67d3707e52d87bbabe59f2\\": function() {
+                Module.STDWEB = {};
+            },
+            \\"__extjs_4985c7263834081d123cc7eff225fe2010747092\\": function() {
+                Module.STDWEB.alloc = Module.web_malloc ; Module.STDWEB.dyncall = function (signature , ptr , args){return Module.web_table.get (ptr). apply (null , args);}; Module.STDWEB.utf8_len = function utf8_len (str){let len = 0 ; for (let i = 0 ; i < str.length ; ++i){let u = str.charCodeAt (i); if (u >= 0xD800 && u <= 0xDFFF){u = 0x10000 + ((u & 0x3FF)<< 10)| (str.charCodeAt (++i)& 0x3FF);}if (u <= 0x7F){++len ;}else if (u <= 0x7FF){len += 2 ;}else if (u <= 0xFFFF){len += 3 ;}else if (u <= 0x1FFFFF){len += 4 ;}else if (u <= 0x3FFFFFF){len += 5 ;}else {len += 6 ;}}return len ;};
+            },
+            \\"__extjs_a986a787f7d7d1abc8c97008ceb5c6945d3f620f\\": function() {
+                Module.STDWEB.to_utf8 = function to_utf8 (str , addr){for (var i = 0 ; i < str.length ; ++i){var u = str.charCodeAt (i); if (u >= 0xD800 && u <= 0xDFFF){u = 0x10000 + ((u & 0x3FF)<< 10)| (str.charCodeAt (++i)& 0x3FF);}if (u <= 0x7F){HEAPU8 [addr ++]= u ;}else if (u <= 0x7FF){HEAPU8 [addr ++]= 0xC0 | (u >> 6); HEAPU8 [addr ++]= 0x80 | (u & 63);}else if (u <= 0xFFFF){HEAPU8 [addr ++]= 0xE0 | (u >> 12); HEAPU8 [addr ++]= 0x80 | ((u >> 6)& 63); HEAPU8 [addr ++]= 0x80 | (u & 63);}else if (u <= 0x1FFFFF){HEAPU8 [addr ++]= 0xF0 | (u >> 18); HEAPU8 [addr ++]= 0x80 | ((u >> 12)& 63); HEAPU8 [addr ++]= 0x80 | ((u >> 6)& 63); HEAPU8 [addr ++]= 0x80 | (u & 63);}else if (u <= 0x3FFFFFF){HEAPU8 [addr ++]= 0xF8 | (u >> 24); HEAPU8 [addr ++]= 0x80 | ((u >> 18)& 63); HEAPU8 [addr ++]= 0x80 | ((u >> 12)& 63); HEAPU8 [addr ++]= 0x80 | ((u >> 6)& 63); HEAPU8 [addr ++]= 0x80 | (u & 63);}else {HEAPU8 [addr ++]= 0xFC | (u >> 30); HEAPU8 [addr ++]= 0x80 | ((u >> 24)& 63); HEAPU8 [addr ++]= 0x80 | ((u >> 18)& 63); HEAPU8 [addr ++]= 0x80 | ((u >> 12)& 63); HEAPU8 [addr ++]= 0x80 | ((u >> 6)& 63); HEAPU8 [addr ++]= 0x80 | (u & 63);}}};
+            },
+            \\"__extjs_83c36ea7560e368457b1ae45a44ffef481c2ad44\\": function() {
+                Module.STDWEB.noop = function (){}; Module.STDWEB.to_js = function to_js (address){var kind = HEAPU8 [address + 12]; if (kind ===0){return undefined ;}else if (kind ===1){return null ;}else if (kind ===2){return HEAP32 [address / 4];}else if (kind ===3){return HEAPF64 [address / 8];}else if (kind ===4){var pointer = HEAPU32 [address / 4]; var length = HEAPU32 [(address + 4)/ 4]; return Module.STDWEB.to_js_string (pointer , length);}else if (kind ===5){return false ;}else if (kind ===6){return true ;}else if (kind ===7){var pointer = HEAPU32 [address / 4]; var length = HEAPU32 [(address + 4)/ 4]; var output = []; for (var i = 0 ; i < length ; ++i){output.push (Module.STDWEB.to_js (pointer + i * 16));}return output ;}else if (kind ===8){var value_array_pointer = HEAPU32 [address / 4]; var length = HEAPU32 [(address + 4)/ 4]; var key_array_pointer = HEAPU32 [(address + 8)/ 4]; var output = {}; for (var i = 0 ; i < length ; ++i){var key_pointer = HEAPU32 [(key_array_pointer + i * 8)/ 4]; var key_length = HEAPU32 [(key_array_pointer + 4 + i * 8)/ 4]; var key = Module.STDWEB.to_js_string (key_pointer , key_length); var value = Module.STDWEB.to_js (value_array_pointer + i * 16); output [key]= value ;}return output ;}else if (kind ===9 || kind ===11 || kind ===12){return Module.STDWEB.acquire_js_reference (HEAP32 [address / 4]);}else if (kind ===10){var adapter_pointer = HEAPU32 [address / 4]; var pointer = HEAPU32 [(address + 4)/ 4]; var deallocator_pointer = HEAPU32 [(address + 8)/ 4]; var output = function (){if (pointer ===0){throw new ReferenceError (\\"Already dropped Rust function called!\\");}var args = Module.STDWEB.alloc (16); Module.STDWEB.serialize_array (args , arguments); Module.STDWEB.dyncall (\\"vii\\" , adapter_pointer , [pointer , args]); var result = Module.STDWEB.tmp ; Module.STDWEB.tmp = null ; return result ;}; output.drop = function (){output.drop = Module.STDWEB.noop ; var function_pointer = pointer ; pointer = 0 ; Module.STDWEB.dyncall (\\"vi\\" , deallocator_pointer , [function_pointer]);}; return output ;}else if (kind ===13){var adapter_pointer = HEAPU32 [address / 4]; var pointer = HEAPU32 [(address + 4)/ 4]; var deallocator_pointer = HEAPU32 [(address + 8)/ 4]; var output = function (){if (pointer ===0){throw new ReferenceError (\\"Already called or dropped FnOnce function called!\\");}output.drop = Module.STDWEB.noop ; var function_pointer = pointer ; pointer = 0 ; var args = Module.STDWEB.alloc (16); Module.STDWEB.serialize_array (args , arguments); Module.STDWEB.dyncall (\\"vii\\" , adapter_pointer , [function_pointer , args]); var result = Module.STDWEB.tmp ; Module.STDWEB.tmp = null ; return result ;}; output.drop = function (){output.drop = Module.STDWEB.noop ; var function_pointer = pointer ; pointer = 0 ; Module.STDWEB.dyncall (\\"vi\\" , deallocator_pointer , [function_pointer]);}; return output ;}else if (kind ===14){var pointer = HEAPU32 [address / 4]; var length = HEAPU32 [(address + 4)/ 4]; var array_kind = HEAPU32 [(address + 8)/ 4]; var pointer_end = pointer + length ; switch (array_kind){case 0 : return HEAPU8.subarray (pointer , pointer_end); case 1 : return HEAP8.subarray (pointer , pointer_end); case 2 : return HEAPU16.subarray (pointer , pointer_end); case 3 : return HEAP16.subarray (pointer , pointer_end); case 4 : return HEAPU32.subarray (pointer , pointer_end); case 5 : return HEAP32.subarray (pointer , pointer_end); case 6 : return HEAPF32.subarray (pointer , pointer_end); case 7 : return HEAPF64.subarray (pointer , pointer_end);}}};
+            },
+            \\"__extjs_2171fbf7dcd6cce3ad90767662e531aee9577813\\": function() {
+                Module.STDWEB.serialize_object = function serialize_object (address , value){var keys = Object.keys (value); var length = keys.length ; var key_array_pointer = Module.STDWEB.alloc (length * 8); var value_array_pointer = Module.STDWEB.alloc (length * 16); HEAPU8 [address + 12]= 8 ; HEAPU32 [address / 4]= value_array_pointer ; HEAPU32 [(address + 4)/ 4]= length ; HEAPU32 [(address + 8)/ 4]= key_array_pointer ; for (var i = 0 ; i < length ; ++i){var key = keys [i]; var key_length = Module.STDWEB.utf8_len (key); var key_pointer = Module.STDWEB.alloc (key_length); Module.STDWEB.to_utf8 (key , key_pointer); var key_address = key_array_pointer + i * 8 ; HEAPU32 [key_address / 4]= key_pointer ; HEAPU32 [(key_address + 4)/ 4]= key_length ; Module.STDWEB.from_js (value_array_pointer + i * 16 , value [key]);}}; Module.STDWEB.serialize_array = function serialize_array (address , value){var length = value.length ; var pointer = Module.STDWEB.alloc (length * 16); HEAPU8 [address + 12]= 7 ; HEAPU32 [address / 4]= pointer ; HEAPU32 [(address + 4)/ 4]= length ; for (var i = 0 ; i < length ; ++i){Module.STDWEB.from_js (pointer + i * 16 , value [i]);}}; Module.STDWEB.from_js = function from_js (address , value){var kind = Object.prototype.toString.call (value); if (kind ===\\"[object String]\\"){var length = Module.STDWEB.utf8_len (value); var pointer = 0 ; if (length > 0){pointer = Module.STDWEB.alloc (length); Module.STDWEB.to_utf8 (value , pointer);}HEAPU8 [address + 12]= 4 ; HEAPU32 [address / 4]= pointer ; HEAPU32 [(address + 4)/ 4]= length ;}else if (kind ===\\"[object Number]\\"){if (value ===(value | 0)){HEAPU8 [address + 12]= 2 ; HEAP32 [address / 4]= value ;}else {HEAPU8 [address + 12]= 3 ; HEAPF64 [address / 8]= value ;}}else if (value ===null){HEAPU8 [address + 12]= 1 ;}else if (value ===undefined){HEAPU8 [address + 12]= 0 ;}else if (value ===false){HEAPU8 [address + 12]= 5 ;}else if (value ===true){HEAPU8 [address + 12]= 6 ;}else {var refid = Module.STDWEB.acquire_rust_reference (value); var id = 9 ; if (kind ===\\"[object Object]\\"){id = 11 ;}else if (kind ===\\"[object Array]\\" || kind ===\\"[object Arguments]\\"){id = 12 ;}HEAPU8 [address + 12]= id ; HEAP32 [address / 4]= refid ;}};
+            },
+            \\"__extjs_8a13e041b26592fd43280496ac01f5f3e049218e\\": function() {
+                Module.STDWEB.to_js_string = function to_js_string (index , length){index = index | 0 ; length = length | 0 ; var end = (index | 0)+ (length | 0); var output = \\"\\" ; while (index < end){var x = HEAPU8 [index ++]; if (x < 128){output += String.fromCharCode (x); continue ;}var init = (x & (0x7F >> 2)); var y = 0 ; if (index < end){y = HEAPU8 [index ++];}var ch = (init << 6)| (y & 63); if (x >= 0xE0){var z = 0 ; if (index < end){z = HEAPU8 [index ++];}var y_z = ((y & 63)<< 6)| (z & 63); ch = init << 12 | y_z ; if (x >= 0xF0){var w = 0 ; if (index < end){w = HEAPU8 [index ++];}ch = (init & 7)<< 18 | ((y_z << 6)| (w & 63));}}output += String.fromCharCode (ch); continue ;}return output ;};
+            },
+            \\"__extjs_b67f2836bfcab57acb8e21dbe580790ff03192f9\\": function() {
+                var id_to_ref_map = {}; var id_to_refcount_map = {}; var ref_to_id_map = new WeakMap (); var ref_to_id_symbol_map = {}; var last_refid = 1 ; Module.STDWEB.acquire_rust_reference = function (reference){if (reference ===undefined || reference ===null){return 0 ;}var refid = ref_to_id_map.get (reference); if (refid ===undefined){refid = ref_to_id_symbol_map [reference];}if (refid ===undefined){refid = last_refid ++; if (typeof reference ===\\"symbol\\"){ref_to_id_symbol_map [reference]= refid ;}else {ref_to_id_map.set (reference , refid);}id_to_ref_map [refid]= reference ; id_to_refcount_map [refid]= 1 ;}else {id_to_refcount_map [refid]++;}return refid ;}; Module.STDWEB.acquire_js_reference = function (refid){return id_to_ref_map [refid];}; Module.STDWEB.increment_refcount = function (refid){id_to_refcount_map [refid]++;}; Module.STDWEB.decrement_refcount = function (refid){id_to_refcount_map [refid]--; if (id_to_refcount_map [refid]===0){var reference = id_to_ref_map [refid]; delete id_to_ref_map [refid]; delete id_to_refcount_map [refid]; if (typeof reference ===\\"symbol\\"){delete ref_to_id_symbol_map [reference];}else {ref_to_id_map.delete (reference);}}};
+            },
+            \\"__extjs_dc2fd915bd92f9e9c6a3bd15174f1414eee3dbaf\\": function() {
+                console.error( 'Encountered a panic!' );
+            },
+            \\"__extjs_b00b05929b445348eab177b6d3f509bcaa28782e\\": function($0, $1) {
+                console.error( 'Panic error message:', Module.STDWEB.to_js_string( $0, $1 ) );
+            },
+            \\"__extjs_20637d8f642203b38c263a5d0f43b9d88ec67c31\\": function($0, $1, $2) {
+                console.error( 'Panic location:', Module.STDWEB.to_js_string( $0, $1 ) + ':' + $2 );
+            },
+            \\"__web_on_grow\\": function() {
+                const buffer = Module.instance.exports.memory.buffer;
+                HEAP8 = new Int8Array( buffer );
+                HEAP16 = new Int16Array( buffer );
+                HEAP32 = new Int32Array( buffer );
+                HEAPU8 = new Uint8Array( buffer );
+                HEAPU16 = new Uint16Array( buffer );
+                HEAPU32 = new Uint32Array( buffer );
+                HEAPF32 = new Float32Array( buffer );
+                HEAPF64 = new Float64Array( buffer );
+            }
+        }
+    };
+
+    function __load( instance ) {
+        Object.defineProperty( Module, 'instance', { value: instance } );
+        Object.defineProperty( Module, 'web_malloc', { value: Module.instance.exports.__web_malloc } );
+        Object.defineProperty( Module, 'web_free', { value: Module.instance.exports.__web_free } );
+        Object.defineProperty( Module, 'web_table', { value: Module.instance.exports.__web_table } );
+
+        if( typeof module !== 'undefined' && module.exports ) {
+            module.exports = Module.exports;
+        } else {
+            Rust.mystdweblib.exports = Module.exports;
+        }
+
+        __imports.env.__web_on_grow();
+        Module.instance.exports.__web_main();
+    }
+
+    if( Module.nodejs ) {
+        const fs = require( 'fs' );
+        const path = require( 'path' );
+        const wasm_path = path.join( __dirname, __webpack_public_path__ + \\"static/wasm/main.6bc8ffba.wasm\\" );
+        const buffer = fs.readFileSync( wasm_path );
+        const mod = new WebAssembly.Module( buffer );
+        const instance = new WebAssembly.Instance( mod, __imports );
+        __load( instance );
+        return Module.exports;
+    } else {
+        const __promise = fetch( __webpack_public_path__ + \\"static/wasm/main.6bc8ffba.wasm\\" )
+            .then( response => response.arrayBuffer() )
+            .then( bytes => WebAssembly.instantiate( bytes, __imports ) )
+            .then( results => {
+                __load( results.instance );
+                console.log( \\"Finished loading Rust wasm module 'mystdweblib'\\" );
+                return Module.exports;
+            })
+            .catch( error => {
+                console.log( \\"Error loading Rust wasm module 'mystdweblib':\\", error );
+                throw error;
+            });
+
+        Rust.mystdweblib = __promise;
+        return __promise;
+    }
+}));
+",
+  "// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// \\"Software\\"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED \\"AS IS\\", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\\\\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, \`up\` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\\\\/?|)([\\\\s\\\\S]*?)((?:\\\\.{1,2}|[^\\\\/]+?|)(\\\\.[^.\\\\/]*|))(?:[\\\\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+",
+  "// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+",
+]
+`;
+
+exports[`rust-native-wasm-loader loads a simple cargo project 1`] = `
+Array [
+  "var buffer = new ArrayBuffer(130);var uint8 = new Uint8Array(buffer);uint8.set([105,109,112,111,114,116,32,108,111,97,100,87,97,115,109,32,102,114,111,109,32,39,46,47,109,121,114,117,115,116,108,105,98,47,115,114,99,47,108,105,98,46,114,115,39,59,10,10,108,111,97,100,87,97,115,109,40,41,46,116,104,101,110,40,114,101,115,117,108,116,32,61,62,32,123,10,32,32,99,111,110,115,111,108,101,46,108,111,103,40,114,101,115,117,108,116,46,105,110,115,116,97,110,99,101,46,101,120,112,111,114,116,115,46,97,100,100,40,49,44,32,50,41,41,59,10,125,41,59,10,]);// This file will not run on it's own
+
+const {
+  Module,
+  instantiate,
+  Memory,
+  Table
+} = WebAssembly;
+
+const WebAssemblyModule = function(deps = {
+  'global': {},
+  'env': {
+    'memory': new Memory({initial: 10, limit: 100}),
+    'table': new Table({initial: 0, element: 'anyfunc'})
+  }
+}) {
+  return instantiate(buffer, deps);
+}
+
+module.exports = WebAssemblyModule;
+",
+]
+`;
+
+exports[`rust-native-wasm-loader loads a simple cargo project with wasm-gc 1`] = `
+Array [
+  "var buffer = new ArrayBuffer(130);var uint8 = new Uint8Array(buffer);uint8.set([105,109,112,111,114,116,32,108,111,97,100,87,97,115,109,32,102,114,111,109,32,39,46,47,109,121,114,117,115,116,108,105,98,47,115,114,99,47,108,105,98,46,114,115,39,59,10,10,108,111,97,100,87,97,115,109,40,41,46,116,104,101,110,40,114,101,115,117,108,116,32,61,62,32,123,10,32,32,99,111,110,115,111,108,101,46,108,111,103,40,114,101,115,117,108,116,46,105,110,115,116,97,110,99,101,46,101,120,112,111,114,116,115,46,97,100,100,40,49,44,32,50,41,41,59,10,125,41,59,10,]);// This file will not run on it's own
+
+const {
+  Module,
+  instantiate,
+  Memory,
+  Table
+} = WebAssembly;
+
+const WebAssemblyModule = function(deps = {
+  'global': {},
+  'env': {
+    'memory': new Memory({initial: 10, limit: 100}),
+    'table': new Table({initial: 0, element: 'anyfunc'})
+  }
+}) {
+  return instantiate(buffer, deps);
+}
+
+module.exports = WebAssemblyModule;
+",
+]
+`;
