@@ -1,4 +1,4 @@
-# Simple example
+# Advanced stdweb example
 
 This is an advanced example of calling Rust from a browser.
 
