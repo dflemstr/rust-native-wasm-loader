@@ -11,3 +11,4 @@ before_install:
   - rustup default nightly
   - rustup target add wasm32-unknown-unknown --toolchain nightly
   - cargo install cargo-web
+  - cargo install --git https://github.com/alexcrichton/wasm-gc
