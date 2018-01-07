@@ -1,4 +1,4 @@
-import loadWasm from './myrustlib/src/lib.rs';
+import loadWasm from './mywarninglib/src/lib.rs';
 
 export const run = async () => {
   const result = await loadWasm();

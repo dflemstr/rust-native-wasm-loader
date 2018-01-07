@@ -1,5 +1,6 @@
 import loadWasm from './mystdweblib/src/main.rs';
 
-loadWasm().then(result => {
-  console.log(result.add(1, 2));
-});
+export const run = async () => {
+  const result = await loadWasm;
+  return result.add('Hello, ', 'World!');
+};

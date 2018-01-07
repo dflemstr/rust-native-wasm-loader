@@ -65,13 +65,16 @@ const loadCargoWeb = async function(self, opts, srcDir) {
 
   self.emitFile(wasmOutFileName, wasmData);
 
-  // Ugly way to do replaceAll
+  // Ugly way to do replaceAll... and this is heavily dependent on cargo-web output; we should
+  // switch to parsing JSON log output once that becomes available.
   return ab2str(jsData)
+    .split(`fetch( ${JSON.stringify(wasmFileName)} )`)
+    .join(`fetch(__webpack_public_path__ + ${JSON.stringify(wasmOutFileName)})`)
     .split(JSON.stringify(wasmFileName))
-    .join(`__webpack_public_path__ + ${JSON.stringify(wasmOutFileName)}`);
+    .join(JSON.stringify(wasmOutFileName));
 };
 
-const loadRaw = async function(opts, srcDir) {
+const loadRaw = async function(self, opts, srcDir) {
   const release = opts.release;
   const gc = opts.gc;
   const target = opts.target;
@@ -80,16 +83,28 @@ const loadRaw = async function(opts, srcDir) {
   const result = await execAsync(cmd, {cwd: srcDir});
 
   let wasmFile;
-  for (let line of result.stdout.split(os.EOL)) {
+  outer: for (let line of result.stdout.split(os.EOL)) {
     if (/^\s*$/.test(line)) {
       continue;
     }
     const data = JSON.parse(line);
-    if (data.hasOwnProperty('filenames')) {
-      wasmFile = data['filenames'].find((p) => p.endsWith('.wasm'));
-      if (wasmFile) {
+    switch (data.reason) {
+      case 'compiler-message':
+        switch (data.message.level) {
+          case 'warning':
+            self.emitWarning(data.message.rendered);
+            break;
+          case 'error':
+            self.emitError(data.message.rendered);
+            break;
+        }
         break;
-      }
+      case 'compiler-artifact':
+        wasmFile = data.filenames.find((p) => p.endsWith('.wasm'));
+        if (wasmFile) {
+          break outer;
+        }
+        break;
     }
   }
 
@@ -118,7 +133,7 @@ const load = async function(self) {
   if (cargoWeb) {
     return await loadCargoWeb(self, opts, srcDir);
   } else {
-    return await loadRaw(opts, srcDir);
+    return await loadRaw(self, opts, srcDir);
   }
 };
 

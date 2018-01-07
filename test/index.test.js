@@ -1,6 +1,8 @@
 import webpack from 'webpack';
-import MemoryFS from 'memory-fs';
 import path from 'path';
+import nodeFileEval from 'node-file-eval';
+import process from 'process';
+import {execAsync} from 'async-child-process';
 
 describe('rust-native-wasm-loader', () => {
   it('loads a simple cargo project', async () => {
@@ -14,9 +16,28 @@ describe('rust-native-wasm-loader', () => {
       loader: 'wasm-loader'
     }];
 
-    const stats = await runLoader('simple', options, preRules);
+    const stats = await runLoader('simple', 'simple', options, preRules);
 
-    expectToMatchSnapshot(stats);
+    await expectToMatchSnapshot(stats);
+  });
+
+  it('loads a simple cargo project with warnings', async () => {
+    jest.setTimeout(100000);
+
+    const options = {
+      release: true,
+    };
+
+    const preRules = [{
+      loader: 'wasm-loader'
+    }];
+
+    // Run clean to ensure that the warning is generated every time
+    await execAsync('cargo clean', {cwd: path.resolve(__dirname, 'fixtures', 'mywarninglib')});
+
+    const stats = await runLoader('warning', 'warning', options, preRules);
+
+    await expectToMatchSnapshot(stats);
   });
 
   it('loads a simple cargo project with wasm-gc', async () => {
@@ -31,9 +52,9 @@ describe('rust-native-wasm-loader', () => {
       loader: 'wasm-loader'
     }];
 
-    const stats = await runLoader('simple', options, preRules);
+    const stats = await runLoader('simple', 'simple-gc', options, preRules);
 
-    expectToMatchSnapshot(stats);
+    await expectToMatchSnapshot(stats);
   });
 
   it('loads a cargo-web project', async () => {
@@ -42,51 +63,62 @@ describe('rust-native-wasm-loader', () => {
     const options = {
       release: true,
       cargoWeb: true,
-      name: 'static/wasm/[name].[hash:8].wasm',
+      name: '[name].[hash:8].wasm',
     };
 
-    const stats = await runLoader('stdweb', options);
+    const stats = await runLoader('stdweb', 'stdweb', options);
 
-    expectToMatchSnapshot(stats);
+    await expectToMatchSnapshot(stats);
   });
 });
 
-function expectToMatchSnapshot(stats) {
-  stats = stats.toJson();
-  expect(stats.modules.map(m => m.source)).toMatchSnapshot();
+function removeCWD(str) {
+  return str.split(`${process.cwd()}/`).join('');
 }
 
-function runLoader(fixture, options, preRules = []) {
+function cleanErrorStack(error) {
+  return removeCWD(error.toString()).split('\n').slice(0, 2).join('\n');
+}
+
+async function expectToMatchSnapshot(stats) {
+  const errors = stats.compilation.errors.map(cleanErrorStack);
+  const warnings = stats.compilation.warnings.map(cleanErrorStack);
+
+  expect(errors).toMatchSnapshot('errors');
+  expect(warnings).toMatchSnapshot('warnings');
+
+  const assetPath = stats.compilation.assets['index.js'].existsAt;
+  const module = await nodeFileEval(assetPath, {
+    encoding: 'utf-8',
+    context: {require, __dirname: path.dirname(assetPath)}
+  });
+  expect(await module.run()).toMatchSnapshot('output');
+}
+
+function runLoader(fixture, test, options, preRules = []) {
   const config = {
-    devtool: 'sourcemap',
     context: path.resolve(__dirname, 'fixtures'),
-    entry: `./${fixture}`,
+    entry: `./${fixture}.js`,
+    target: 'node',
     output: {
-      path: path.resolve(__dirname, 'outputs', fixture),
-      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'outputs', test),
+      filename: 'index.js'
     },
     module: {
-      rules: preRules.concat([{
+      rules: [{
         test: /\.rs$/,
-        use: {
+        use: preRules.concat([{
           loader: path.resolve(__dirname, '../src'),
           options,
-        }
-      }])
+        }])
+      }]
     },
-    plugins: [
-      new webpack.optimize.CommonsChunkPlugin(
-        {
-          name: ['runtime'],
-          minChunks: Infinity
-        }
-      )
-    ]
+    node: {
+      __dirname: false,
+    }
   };
 
   const compiler = webpack(config);
-
-  compiler.outputFileSystem = new MemoryFS();
 
   return new Promise((resolve, reject) => compiler.run((err, stats) => {
     if (err) {

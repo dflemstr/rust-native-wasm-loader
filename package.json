@@ -16,7 +16,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "jest": "^22.0.4",
-    "memory-fs": "^0.4.1",
+    "node-file-eval": "^1.0.0",
     "wasm-loader": "^1.1.0",
     "webpack": "^3.10.0"
   },
