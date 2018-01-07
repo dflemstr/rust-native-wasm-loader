@@ -1,4 +1,4 @@
-# `rust-native-wasm-loader`
+# `rust-native-wasm-loader` [![Build Status](https://travis-ci.org/dflemstr/rust-native-wasm-loader.svg?branch=master)](https://travis-ci.org/dflemstr/rust-native-wasm-loader)
 
 This is a webpack loader that loads Rust code as a WebAssembly module.  It uses the native Rust
 support for compiling to `wasm32` and does not require Emscripten.
