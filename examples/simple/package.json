@@ -1,0 +1,15 @@
+{
+  "name": "simple",
+  "version": "1.0.0",
+  "author": "David Flemström <david.flemstrom@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "rust-native-wasm-loader": "file:../..",
+    "wasm-loader": "^1.1.0",
+    "webpack": "^3.10.0"
+  },
+  "scripts": {
+    "build": "webpack"
+  }
+}

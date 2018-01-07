@@ -175,7 +175,7 @@ separately.  The loader now returns a normal Javascript module that can be loade
 ```js
 import loadWasm from './path/to/rustlib/src/lib.rs'
 
-loadWasm().then(module => {
+loadWasm.then(module => {
   console.log('return value was', module.add(2, 3));
 });
 ```

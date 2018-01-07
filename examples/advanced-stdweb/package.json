@@ -1,0 +1,19 @@
+{
+  "name": "advanced-stdweb",
+  "version": "1.0.0",
+  "author": "David Flemström <david.flemstrom@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "file-loader": "^1.1.6",
+    "html-webpack-plugin": "^2.30.1",
+    "rust-native-wasm-loader": "file:../..",
+    "webpack": "^3.10.0",
+    "webpack-manifest-plugin": "^1.3.2"
+  },
+  "scripts": {
+    "build": "webpack"
+  }
+}

@@ -1,0 +1,7 @@
+[package]
+name = "simple"
+version = "0.1.0"
+authors = ["David Flemström <david.flemstrom@gmail.com>"]
+
+[lib]
+crate-type = ["cdylib"]
