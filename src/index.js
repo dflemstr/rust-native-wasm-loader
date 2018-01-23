@@ -35,13 +35,14 @@ const loadCargoWeb = async function(self, opts, srcDir) {
   const cmd = `cargo web build --message-format=json --target-webasm${release ? ' --release' : ''}`;
   const result = await execAsync(cmd, {cwd: srcDir});
 
-  const wasmFile = handleCargo(self, result);
+  const {wasmFile, jsFile} = handleCargo(self, result);
 
   if (!wasmFile) {
     throw new Error('No wasm file produced as build output');
   }
-
-  const jsFile = wasmFile.substr(0, wasmFile.length - '.wasm'.length) + '.js';
+  if (!jsFile) {
+    throw new Error('No js file produced as build output');
+  }
 
   const jsData = await fse.readFile(jsFile);
   const wasmData = await fse.readFile(wasmFile);
@@ -69,7 +70,7 @@ const loadRaw = async function(self, opts, srcDir) {
 
   const result = await execAsync(cmd, {cwd: srcDir});
 
-  let wasmFile = handleCargo(self, result);
+  let {wasmFile} = handleCargo(self, result);
 
   if (!wasmFile) {
     throw new Error('No wasm file produced as build output');
@@ -86,6 +87,7 @@ const loadRaw = async function(self, opts, srcDir) {
 
 const handleCargo = function(self, result) {
   let wasmFile;
+  let jsFile;
   outer: for (let line of result.stdout.split(os.EOL)) {
     if (/^\s*$/.test(line)) {
       continue;
@@ -103,14 +105,19 @@ const handleCargo = function(self, result) {
         }
         break;
       case 'compiler-artifact':
-        wasmFile = data.filenames.find((p) => p.endsWith('.wasm'));
+        if (!wasmFile) {
+          wasmFile = data.filenames.find((p) => p.endsWith('.wasm'));
+        }
+        if (!jsFile) {
+          jsFile = data.filenames.find((p) => p.endsWith('.js'));
+        }
         if (wasmFile) {
           break outer;
         }
         break;
     }
   }
-  return wasmFile;
+  return {wasmFile, jsFile};
 };
 
 const load = async function(self) {
