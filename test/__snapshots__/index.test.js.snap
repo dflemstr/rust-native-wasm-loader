@@ -12,7 +12,7 @@ exports[`rust-native-wasm-loader loads a simple cargo project with warnings: out
 
 exports[`rust-native-wasm-loader loads a simple cargo project with warnings: warnings 1`] = `
 Array [
-  "ModuleWarning: (Emitted value instead of an instance of Error) warning: unused variable: \`b\`
+  "ModuleWarning: warning: unused variable: \`b\`
  --> src/lib.rs:2:20",
 ]
 `;

@@ -95,10 +95,10 @@ const handleCargo = function(self, result) {
       case 'compiler-message':
         switch (data.message.level) {
           case 'warning':
-            self.emitWarning(data.message.rendered);
+            self.emitWarning(new Error(data.message.rendered));
             break;
           case 'error':
-            self.emitError(data.message.rendered);
+            self.emitError(new Error(data.message.rendered));
             break;
         }
         break;
