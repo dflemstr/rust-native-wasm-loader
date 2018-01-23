@@ -56,7 +56,7 @@ const loadCargoWeb = async function(self, opts, srcDir) {
 
   // Ugly way to do replaceAll... would be great to have some way to create a custom template here
   return ab2str(jsData)
-    .split(`fetch( ${JSON.stringify(wasmFile)} )`)
+    .split(`fetch( ${JSON.stringify(path.basename(wasmFile))} )`)
     .join(`fetch(__webpack_public_path__ + ${JSON.stringify(wasmOutFileName)})`)
     .split(JSON.stringify(path.basename(wasmFile)))
     .join(JSON.stringify(wasmOutFileName));
