@@ -31,8 +31,9 @@ const DEFAULT_OPTIONS = {
 const loadCargoWeb = async function(self, opts, srcDir) {
   const release = opts.release;
   const name = opts.name;
+  const target = opts.target;
 
-  const cmd = `cargo web build --message-format=json --target-webasm${release ? ' --release' : ''}`;
+  const cmd = `cargo web build --message-format=json --target=${target}${release ? ' --release' : ''}`;
   const result = await execAsync(cmd, {cwd: srcDir});
 
   const {wasmFile, jsFile} = handleCargo(self, result);
