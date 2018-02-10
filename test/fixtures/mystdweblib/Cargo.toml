@@ -3,5 +3,8 @@ authors = ["David Flemström <david.flemstrom@gmail.com>"]
 name = "mystdweblib"
 version = "0.1.0"
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
-stdweb = "0.3.0"
+stdweb = { git = "https://github.com/koute/stdweb.git" }

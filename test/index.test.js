@@ -2,7 +2,7 @@ import webpack from 'webpack';
 import path from 'path';
 import nodeFileEval from 'node-file-eval';
 import process from 'process';
-import {execAsync} from 'async-child-process';
+import { execAsync } from 'async-child-process';
 
 describe('rust-native-wasm-loader', () => {
   it('loads a simple cargo project', async () => {
@@ -63,10 +63,14 @@ describe('rust-native-wasm-loader', () => {
     const options = {
       release: true,
       cargoWeb: true,
-      name: '[name].[hash:8].wasm',
     };
 
-    const stats = await runLoader('stdweb', 'stdweb', options);
+    const otherRules = [{
+      test: /\.wasm$/,
+      loader: 'wasm-loader'
+    }];
+
+    const stats = await runLoader('stdweb', 'stdweb', options, [], otherRules);
 
     await expectToMatchSnapshot(stats);
   });
@@ -95,7 +99,7 @@ async function expectToMatchSnapshot(stats) {
   expect(await module.run()).toMatchSnapshot('output');
 }
 
-function runLoader(fixture, test, options, preRules = []) {
+function runLoader(fixture, test, options, preRules = [], otherRules = []) {
   const config = {
     context: path.resolve(__dirname, 'fixtures'),
     entry: `./${fixture}.js`,
@@ -105,13 +109,13 @@ function runLoader(fixture, test, options, preRules = []) {
       filename: 'index.js'
     },
     module: {
-      rules: [{
+      rules: otherRules.concat([{
         test: /\.rs$/,
         use: preRules.concat([{
           loader: path.resolve(__dirname, '../src'),
           options,
         }])
-      }]
+      }])
     },
     node: {
       __dirname: false,
