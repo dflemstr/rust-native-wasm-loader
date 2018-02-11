@@ -3,6 +3,7 @@ import path from 'path';
 import nodeFileEval from 'node-file-eval';
 import process from 'process';
 import {execAsync} from 'async-child-process';
+import {TextDecoder, TextEncoder} from 'text-encoding';
 
 describe('rust-native-wasm-loader', () => {
   it('loads a simple cargo project', async () => {
@@ -70,6 +71,31 @@ describe('rust-native-wasm-loader', () => {
 
     await expectToMatchSnapshot(stats);
   });
+
+  it('loads a wasm-bindgen project', async () => {
+    jest.setTimeout(400000);
+
+    const options = {
+      release: true,
+      wasmBindgen: true,
+      wasm2es6js: true,
+    };
+
+    const otherRules = [
+      {
+        test: /\.(js|jsx|mjs)$/,
+        include: path.resolve(__dirname, 'src'),
+        loader: 'babel-loader',
+        options: {
+          compact: true,
+        },
+      },
+    ];
+
+    const stats = await runLoader('wasmbindgen', 'wasmbindgen', options, [], otherRules);
+
+    await expectToMatchSnapshot(stats);
+  });
 });
 
 function removeCWD(str) {
@@ -90,12 +116,19 @@ async function expectToMatchSnapshot(stats) {
   const assetPath = stats.compilation.assets['index.js'].existsAt;
   const module = await nodeFileEval(assetPath, {
     encoding: 'utf-8',
-    context: {require, __dirname: path.dirname(assetPath)}
+    context: {
+      require,
+      Buffer,
+      TextDecoder,
+      TextEncoder,
+      console,
+      __dirname: path.dirname(assetPath)
+    }
   });
   expect(await module.run()).toMatchSnapshot('output');
 }
 
-function runLoader(fixture, test, options, preRules = []) {
+function runLoader(fixture, test, options, preRules = [], otherRules = []) {
   const config = {
     context: path.resolve(__dirname, 'fixtures'),
     entry: `./${fixture}.js`,
@@ -105,13 +138,13 @@ function runLoader(fixture, test, options, preRules = []) {
       filename: 'index.js'
     },
     module: {
-      rules: [{
+      rules: otherRules.concat([{
         test: /\.rs$/,
         use: preRules.concat([{
           loader: path.resolve(__dirname, '../src'),
           options,
         }])
-      }]
+      }])
     },
     node: {
       __dirname: false,

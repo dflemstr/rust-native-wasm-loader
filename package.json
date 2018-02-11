@@ -7,7 +7,6 @@
   "author": "David Flemström <david.flemstrom@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "arraybuffer-to-string": "^1.0.1",
     "async-child-process": "^1.1.1",
     "fs-extra": "^5.0.0",
     "loader-utils": "^1.1.0"
@@ -17,6 +16,7 @@
     "babel-preset-env": "^1.6.1",
     "jest": "^22.0.4",
     "node-file-eval": "^1.0.0",
+    "text-encoding": "^0.6.4",
     "wasm-loader": "^1.1.0",
     "webpack": "^3.10.0"
   },

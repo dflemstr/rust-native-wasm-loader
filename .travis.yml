@@ -6,9 +6,10 @@ cache:
 
 before_install:
   - export PATH="$HOME/.cargo/bin:$PATH"
-  - curl https://sh.rustup.rs -sSf | sh -s -- -y
-  - rustup toolchain install nightly
-  - rustup default nightly
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
   - rustup target add wasm32-unknown-unknown --toolchain nightly
   - cargo install cargo-web
   - cargo install --git https://github.com/alexcrichton/wasm-gc
+  - cargo install --git https://github.com/alexcrichton/wasm-bindgen
+
+script: yarn test
