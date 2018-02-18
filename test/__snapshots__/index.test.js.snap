@@ -28,3 +28,9 @@ exports[`rust-native-wasm-loader loads a simple cargo project: errors 1`] = `Arr
 exports[`rust-native-wasm-loader loads a simple cargo project: output 1`] = `3`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project: warnings 1`] = `Array []`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project: errors 1`] = `Array []`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project: output 1`] = `""`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project: warnings 1`] = `Array []`;
