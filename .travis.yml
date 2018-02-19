@@ -12,4 +12,6 @@ before_install:
   - cargo install --git https://github.com/alexcrichton/wasm-gc
   - cargo install --git https://github.com/alexcrichton/wasm-bindgen
 
-script: yarn test
+script:
+  - yarn test
+  - for example in simple advanced-stdweb advanced-wasm-bindgen; do (cd examples/$example; yarn; yarn build); done
