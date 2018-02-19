@@ -1,14 +1,24 @@
-# `rust-native-wasm-loader` [![Build Status](https://travis-ci.org/dflemstr/rust-native-wasm-loader.svg?branch=master)](https://travis-ci.org/dflemstr/rust-native-wasm-loader) [![rust-native-wasm-loader](https://img.shields.io/npm/dt/rust-native-wasm-loader.svg)](https://www.npmjs.com/package/rust-native-wasm-loader) [![npm](https://img.shields.io/npm/v/rust-native-wasm-loader.svg)](https://www.npmjs.com/package/rust-native-wasm-loader)
+# `rust-native-wasm-loader`
+
+[![Build Status](https://travis-ci.org/dflemstr/rust-native-wasm-loader.svg?branch=master)](https://travis-ci.org/dflemstr/rust-native-wasm-loader) [![rust-native-wasm-loader](https://img.shields.io/npm/dt/rust-native-wasm-loader.svg)](https://www.npmjs.com/package/rust-native-wasm-loader) [![npm](https://img.shields.io/npm/v/rust-native-wasm-loader.svg)](https://www.npmjs.com/package/rust-native-wasm-loader)
 
 This is a webpack loader that loads Rust code as a WebAssembly module.  It uses the native Rust
 support for compiling to `wasm32` and does not require Emscripten.
 
-## Usage
+   * [rust-native-wasm-loader](#rust-native-wasm-loader)
+   * [Usage](#usage)
+      * [Short version](#short-version)
+      * [Available loader options](#available-loader-options)
+      * [Long version](#long-version)
+   * [wasm-bindgen experimental support](#wasm-bindgen-experimental-support)
+   * [cargo-web experimental support](#cargo-web-experimental-support)
+
+# Usage
 
 If you already know how to use Rust and Webpack, read the "Short version" of this section.  If you
 want a full example, read the "Long version."
 
-### Short version
+## Short version
 
 Add both this loader and `wasm-loader` to your Webpack loaders in `webpack.config.js`:
 
@@ -51,15 +61,26 @@ loadWasm().then(result => {
 });
 ```
 
-### Available loader options
+## Available loader options
 
-  - `gc`: `boolean`; whether to run `wasm-gc` on the WebAssembly output.  Reduces binary size but
-    requires installing [wasm-gc][].
   - `release`: `boolean`; whether to compile the WebAssembly module in debug or release mode;
     defaults to `false`.
+  - `gc`: `boolean`; whether to run `wasm-gc` on the WebAssembly output.  Reduces binary size but
+    requires installing [wasm-gc][].  Defaults to `false` and is a no-op in `wasmBindgen` or
+    `cargoWeb` mode.
   - `target`: `string`; the Rust target to use; this defaults to `wasm32-unknown-unknown`
+  - `wasmBindgen`: `boolean`; use `wasm-bindgen` to post-process the wasm file.  This probably means
+    that you need to chain this loader with `babel-loader` as well since `wasm-bindgen` outputs ES6
+    (or typescript).
+      - `wasm2es6js`: `boolean`; use `wasm2es6js` to inline the wasm file into generated Javascript.
+        Useful if webpack is not configured to load wasm files via some other loader.
+  - `cargoWeb`: `boolean`; use `cargo-web` to compile the project instead of only building a `wasm`
+    module.  Defaults to `false`.
+      - `name`: `string`; the file name to use for emitting the wasm file for `cargo-web`, e.g.
+        `'static/wasm/[name].[hash:8].wasm'`.
+      - `regExp`: `string`; a regexp to extract additional variables for use in `name`.
 
-### Long version
+## Long version
 
 First, you need Rust installed.  The easiest way is to follow the instructions at [rustup.rs][].
 
@@ -155,7 +176,48 @@ $ node dist/index.js
 return value was 5
 ```
 
-### `cargo-web` experimental support
+# `wasm-bindgen` experimental support
+
+You can use experimental `wasm-bindgen` support with the following options:
+
+```js
+{
+  test: /\.rs$/,
+  use: [
+    {
+      loader: 'babel-loader',
+      options: {
+        compact: true,
+      }
+    },
+    {
+      loader: 'rust-native-wasm-loader',
+      options: {
+        release: true,
+        wasmBindgen: true,
+        wasm2es6js: true,
+      }
+    }
+  ]
+}
+```
+
+The loader now uses `wasm-bindgen` to build the project.  If you are using webpack 4, you probably
+don't need the `wasm2es6js` flag, but if you are using webpack 3, it is needed in order to inline
+the loading of the wasm file correctly.  The loader now returns a normal Javascript module that can
+be loaded like so:
+
+```js
+import { add, wasmBooted } from './path/to/rustlib/src/lib.rs'
+
+wasmBooted.then(() => {
+  console.log('return value was', add(2, 3));
+});
+```
+
+(The `wasmBooted` promise is not necessary when using webpack 4)
+
+# `cargo-web` experimental support
 
 You can use experimental `cargo-web` support with the following options:
 
