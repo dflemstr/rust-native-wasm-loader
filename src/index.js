@@ -18,6 +18,16 @@ const findSrcDir = async function (childPath) {
   return null;
 };
 
+const cargoCommand = (target, release, subcmd = []) => {
+  const cmd = ['cargo', ...subcmd, 'build', '--message-format=json', '--target=' + target];
+
+  if (release) {
+    cmd.push('--release');
+  }
+
+  return cmd.join(' ');
+};
+
 const DEFAULT_OPTIONS = {
   release: false,
   gc: false,
@@ -33,7 +43,7 @@ const loadWasmBindgen = async function (self, opts, srcDir) {
   const release = opts.release;
   const target = opts.target;
 
-  const cmd = `cargo build --message-format=json --target=${target}${release ? ' --release' : ''}`;
+  const cmd = cargoCommand(target, release);
   const result = await execAsync(cmd, {cwd: srcDir});
 
   const {wasmFile} = handleCargo(self, result);
@@ -69,7 +79,7 @@ const loadCargoWeb = async function (self, opts, srcDir) {
   const name = opts.name;
   const target = opts.target;
 
-  const cmd = `cargo web build --message-format=json --target=${target}${release ? ' --release' : ''}`;
+  const cmd = cargoCommand(target, release, ['web']);
   const result = await execAsync(cmd, {cwd: srcDir});
 
   const {wasmFile, jsFile} = handleCargo(self, result);
@@ -103,9 +113,8 @@ const loadRaw = async function (self, opts, srcDir) {
   const release = opts.release;
   const gc = opts.gc;
   const target = opts.target;
-  const cmd = `cargo build --message-format=json --target=${target}${release ? ' --release' : ''}`;
-
-  const result = await execAsync(cmd, {cwd: srcDir});
+  const cargoCmd = cargoCommand(target, release);
+  const result = await execAsync(cargoCmd, {cwd: srcDir});
 
   let {wasmFile} = handleCargo(self, result);
 
