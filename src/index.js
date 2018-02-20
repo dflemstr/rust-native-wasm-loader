@@ -1,4 +1,4 @@
-import {execAsync} from 'async-child-process';
+import { execAsync } from 'async-child-process';
 import fse from 'fs-extra';
 import loaderUtils from 'loader-utils';
 import os from 'os';
@@ -41,7 +41,7 @@ const DEFAULT_OPTIONS = {
 
 const loadWasmBindgen = async function (self, {release, target, wasm2es6js}, srcDir) {
   const cmd = cargoCommand(target, release);
-  const result = await execAsync(cmd, {cwd: srcDir});
+  const result = await execAsync(cmd, {cwd: srcDir, maxBuffer: 2 * 1024 * 1024 * 1024});
 
   const {wasmFile} = handleCargo(self, result);
 
@@ -73,7 +73,7 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js}, src
 
 const loadCargoWeb = async function (self, {release, name, target, regExp}, srcDir) {
   const cmd = cargoCommand(target, release, ['web']);
-  const result = await execAsync(cmd, {cwd: srcDir});
+  const result = await execAsync(cmd, {cwd: srcDir, maxBuffer: 2 * 1024 * 1024 * 1024});
 
   const {wasmFile, jsFile} = handleCargo(self, result);
 
@@ -104,7 +104,7 @@ const loadCargoWeb = async function (self, {release, name, target, regExp}, srcD
 
 const loadRaw = async function (self, {release, gc, target}, srcDir) {
   const cargoCmd = cargoCommand(target, release);
-  const result = await execAsync(cargoCmd, {cwd: srcDir});
+  const result = await execAsync(cargoCmd, {cwd: srcDir, maxBuffer: 2 * 1024 * 1024 * 1024});
 
   let {wasmFile} = handleCargo(self, result);
 
