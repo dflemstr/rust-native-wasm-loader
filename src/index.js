@@ -55,7 +55,7 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js}, src
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
-  const {wasmFile} = handleCargo(self, result);
+  const {wasmFile} = await handleCargo(self, result);
 
   if (!wasmFile) {
     throw new Error('No wasm file produced as build output');
@@ -87,7 +87,7 @@ const loadCargoWeb = async function (self, {release, name, target, regExp}, srcD
   const cmd = cargoCommand(target, release, ['web']);
   const result = await execPermissive(cmd, srcDir);
 
-  const {wasmFile, jsFile} = handleCargo(self, result);
+  const {wasmFile, jsFile} = await handleCargo(self, result);
 
   if (!wasmFile) {
     throw new Error('No wasm file produced as build output');
@@ -118,7 +118,7 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
-  let {wasmFile} = handleCargo(self, result);
+  let {wasmFile} = await handleCargo(self, result);
 
   if (!wasmFile) {
     throw new Error('No wasm file produced as build output');
@@ -133,7 +133,7 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
   return await fse.readFile(wasmFile);
 };
 
-const handleCargo = function (self, result) {
+const handleCargo = async function (self, result) {
   let wasmFile;
   let jsFile;
   let hasError = false;
@@ -172,6 +172,16 @@ const handleCargo = function (self, result) {
     throw new Error("cargo build failed");
   }
 
+  const depFile = wasmFile.slice(0, -'.wasm'.length) + '.d';
+  const depContents = await fse.readFile(depFile, 'utf-8');
+  for (let line of depContents.split('\n')) {
+    if (line.startsWith(wasmFile) || (jsFile && line.startsWith(jsFile))) {
+      for (let dep of line.split(/:\s+/)[1].split(/\s+/)) {
+        self.addDependency(dep);
+      }
+    }
+  }
+
   return {wasmFile, jsFile};
 };
 
@@ -180,6 +190,7 @@ const load = async function (self) {
   if (!srcDir) {
     throw new Error('No Cargo.toml file found in any parent directory.');
   }
+  self.addDependency(path.join(srcDir, 'Cargo.toml'));
 
   const opts = Object.assign({}, DEFAULT_OPTIONS, loaderUtils.getOptions(self));
   const cargoWeb = opts.cargoWeb;
