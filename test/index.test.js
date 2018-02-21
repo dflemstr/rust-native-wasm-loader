@@ -2,8 +2,8 @@ import webpack from 'webpack';
 import path from 'path';
 import nodeFileEval from 'node-file-eval';
 import process from 'process';
-import {execAsync} from 'async-child-process';
-import {TextDecoder, TextEncoder} from 'text-encoding';
+import { execAsync } from 'async-child-process';
+import { TextDecoder, TextEncoder } from 'text-encoding';
 
 describe('rust-native-wasm-loader', () => {
   it('loads a simple cargo project', async () => {
@@ -37,6 +37,18 @@ describe('rust-native-wasm-loader', () => {
     await execAsync('cargo clean', {cwd: path.resolve(__dirname, 'fixtures', 'mywarninglib')});
 
     const stats = await runLoader('warning', 'warning', options, preRules);
+
+    await expectToMatchSnapshot(stats);
+  });
+
+  it('loads a simple cargo project with errors', async () => {
+    jest.setTimeout(100000);
+
+    const options = {
+      release: true,
+    };
+
+    const stats = await runLoader('error', 'error', options);
 
     await expectToMatchSnapshot(stats);
   });
@@ -114,18 +126,22 @@ async function expectToMatchSnapshot(stats) {
   expect(warnings).toMatchSnapshot('warnings');
 
   const assetPath = stats.compilation.assets['index.js'].existsAt;
-  const module = await nodeFileEval(assetPath, {
-    encoding: 'utf-8',
-    context: {
-      require,
-      Buffer,
-      TextDecoder,
-      TextEncoder,
-      console,
-      __dirname: path.dirname(assetPath)
-    }
-  });
-  expect(await module.run()).toMatchSnapshot('output');
+  try {
+    const module = await nodeFileEval(assetPath, {
+      encoding: 'utf-8',
+      context: {
+        require,
+        Buffer,
+        TextDecoder,
+        TextEncoder,
+        console,
+        __dirname: path.dirname(assetPath)
+      }
+    });
+    expect(await module.run()).toMatchSnapshot('output');
+  } catch (e) {
+    expect(e.message.split('\n')[0]).toMatchSnapshot('failure');
+  }
 }
 
 function runLoader(fixture, test, options, preRules = [], otherRules = []) {

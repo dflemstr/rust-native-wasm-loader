@@ -6,6 +6,21 @@ exports[`rust-native-wasm-loader loads a cargo-web project: output 1`] = `"Hello
 
 exports[`rust-native-wasm-loader loads a cargo-web project: warnings 1`] = `Array []`;
 
+exports[`rust-native-wasm-loader loads a simple cargo project with errors: errors 1`] = `
+Array [
+  "ModuleBuildError: Module build failed: Error: cargo build failed
+    at handleCargo (src/index.js:201:1655)",
+  "ModuleError: error: aborting due to previous error
+",
+  "ModuleError: error[E0277]: cannot add \`&str\` to \`{integer}\`
+ --> src/lib.rs:2:7",
+]
+`;
+
+exports[`rust-native-wasm-loader loads a simple cargo project with errors: failure 1`] = `"Module build failed: Error: cargo build failed"`;
+
+exports[`rust-native-wasm-loader loads a simple cargo project with errors: warnings 1`] = `Array []`;
+
 exports[`rust-native-wasm-loader loads a simple cargo project with warnings: errors 1`] = `Array []`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project with warnings: output 1`] = `1`;

@@ -1,0 +1,7 @@
+[package]
+authors = ["David Flemström <david.flemstrom@gmail.com>"]
+name = "myerrorlib"
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib"]

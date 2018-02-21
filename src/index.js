@@ -1,8 +1,11 @@
-import { execAsync } from 'async-child-process';
+import { promisify } from 'util';
+import { exec } from 'child_process';
 import fse from 'fs-extra';
 import loaderUtils from 'loader-utils';
 import os from 'os';
 import path from 'path';
+
+const execAsync = promisify(exec);
 
 const findSrcDir = async function (childPath) {
   let candidate = childPath;
@@ -39,9 +42,18 @@ const DEFAULT_OPTIONS = {
   wasm2es6js: false,
 };
 
+const execPermissive = async function (cmd, srcDir) {
+  try {
+    let options = {cwd: srcDir, encoding: 'utf-8', maxBuffer: 2 * 1024 * 1024 * 1024};
+    return await execAsync(cmd, options);
+  } catch (e) {
+    return e;
+  }
+};
+
 const loadWasmBindgen = async function (self, {release, target, wasm2es6js}, srcDir) {
   const cmd = cargoCommand(target, release);
-  const result = await execAsync(cmd, {cwd: srcDir, maxBuffer: 2 * 1024 * 1024 * 1024});
+  const result = await execPermissive(cmd, srcDir);
 
   const {wasmFile} = handleCargo(self, result);
 
@@ -73,7 +85,7 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js}, src
 
 const loadCargoWeb = async function (self, {release, name, target, regExp}, srcDir) {
   const cmd = cargoCommand(target, release, ['web']);
-  const result = await execAsync(cmd, {cwd: srcDir, maxBuffer: 2 * 1024 * 1024 * 1024});
+  const result = await execPermissive(cmd, srcDir);
 
   const {wasmFile, jsFile} = handleCargo(self, result);
 
@@ -103,8 +115,8 @@ const loadCargoWeb = async function (self, {release, name, target, regExp}, srcD
 };
 
 const loadRaw = async function (self, {release, gc, target}, srcDir) {
-  const cargoCmd = cargoCommand(target, release);
-  const result = await execAsync(cargoCmd, {cwd: srcDir, maxBuffer: 2 * 1024 * 1024 * 1024});
+  const cmd = cargoCommand(target, release);
+  const result = await execPermissive(cmd, srcDir);
 
   let {wasmFile} = handleCargo(self, result);
 
@@ -124,6 +136,7 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
 const handleCargo = function (self, result) {
   let wasmFile;
   let jsFile;
+  let hasError = false;
   outer: for (let line of result.stdout.split(os.EOL)) {
     if (/^\s*$/.test(line)) {
       continue;
@@ -137,6 +150,7 @@ const handleCargo = function (self, result) {
             break;
           case 'error':
             self.emitError(new Error(data.message.rendered));
+            hasError = true;
             break;
         }
         break;
@@ -153,6 +167,11 @@ const handleCargo = function (self, result) {
         break;
     }
   }
+
+  if (hasError) {
+    throw new Error("cargo build failed");
+  }
+
   return {wasmFile, jsFile};
 };
 
