@@ -1,19 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`rust-native-wasm-loader loads a cargo-web project: dependencies 1`] = `
+Set {
+  "test/fixtures/mystdweblib/Cargo.toml",
+  "test/fixtures/mystdweblib/src/main.rs",
+  "test/fixtures/stdweb.js",
+}
+`;
+
 exports[`rust-native-wasm-loader loads a cargo-web project: errors 1`] = `Array []`;
 
 exports[`rust-native-wasm-loader loads a cargo-web project: output 1`] = `"Hello, World!"`;
 
 exports[`rust-native-wasm-loader loads a cargo-web project: warnings 1`] = `Array []`;
 
+exports[`rust-native-wasm-loader loads a simple cargo project with errors: dependencies 1`] = `
+Set {
+  "test/fixtures/error.js",
+  "test/fixtures/myerrorlib/Cargo.toml",
+  "test/fixtures/myerrorlib/src/lib.rs",
+}
+`;
+
 exports[`rust-native-wasm-loader loads a simple cargo project with errors: errors 1`] = `
 Array [
-  "ModuleBuildError: Module build failed: Error: cargo build failed
-    at handleCargo (src/index.js:201:1655)",
-  "ModuleError: error: aborting due to previous error
-",
-  "ModuleError: error[E0277]: cannot add \`&str\` to \`{integer}\`
- --> src/lib.rs:2:7",
+  "ModuleBuildError: Module build failed: Error: cargo build failed",
+  "ModuleError: error: aborting due to previous error",
+  "ModuleError: error[E0277]: cannot add \`&str\` to \`{integer}\`",
 ]
 `;
 
@@ -21,15 +34,31 @@ exports[`rust-native-wasm-loader loads a simple cargo project with errors: failu
 
 exports[`rust-native-wasm-loader loads a simple cargo project with errors: warnings 1`] = `Array []`;
 
+exports[`rust-native-wasm-loader loads a simple cargo project with warnings: dependencies 1`] = `
+Set {
+  "test/fixtures/mywarninglib/Cargo.toml",
+  "test/fixtures/mywarninglib/src/lib.rs",
+  "test/fixtures/warning.js",
+}
+`;
+
 exports[`rust-native-wasm-loader loads a simple cargo project with warnings: errors 1`] = `Array []`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project with warnings: output 1`] = `1`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project with warnings: warnings 1`] = `
 Array [
-  "ModuleWarning: warning: unused variable: \`b\`
- --> src/lib.rs:2:20",
+  "ModuleWarning: warning: unused variable: \`b\`",
 ]
+`;
+
+exports[`rust-native-wasm-loader loads a simple cargo project with wasm-gc: dependencies 1`] = `
+Set {
+  "test/fixtures/myrustlib/Cargo.toml",
+  "test/fixtures/myrustlib/src/add.rs",
+  "test/fixtures/myrustlib/src/lib.rs",
+  "test/fixtures/simple.js",
+}
 `;
 
 exports[`rust-native-wasm-loader loads a simple cargo project with wasm-gc: errors 1`] = `Array []`;
@@ -38,11 +67,30 @@ exports[`rust-native-wasm-loader loads a simple cargo project with wasm-gc: outp
 
 exports[`rust-native-wasm-loader loads a simple cargo project with wasm-gc: warnings 1`] = `Array []`;
 
+exports[`rust-native-wasm-loader loads a simple cargo project: dependencies 1`] = `
+Set {
+  "test/fixtures/myrustlib/Cargo.toml",
+  "test/fixtures/myrustlib/src/add.rs",
+  "test/fixtures/myrustlib/src/lib.rs",
+  "test/fixtures/simple.js",
+}
+`;
+
 exports[`rust-native-wasm-loader loads a simple cargo project: errors 1`] = `Array []`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project: output 1`] = `3`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project: warnings 1`] = `Array []`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project: dependencies 1`] = `
+Set {
+  "test/fixtures/mywasmbindgenlib/Cargo.toml",
+  "test/fixtures/mywasmbindgenlib/src/lib.rs",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_wasm.js",
+  "test/fixtures/wasmbindgen.js",
+}
+`;
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project: errors 1`] = `Array []`;
 

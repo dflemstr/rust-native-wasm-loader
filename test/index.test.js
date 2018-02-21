@@ -115,15 +115,37 @@ function removeCWD(str) {
 }
 
 function cleanErrorStack(error) {
-  return removeCWD(error.toString()).split('\n').slice(0, 2).join('\n');
+  return removeCWD(error.toString()).split('\n').slice(0, 1).join('\n');
+}
+
+function collectDependencies(dependencies, obj) {
+  if ('fileDependencies' in obj) {
+    for (let dep of obj.fileDependencies) {
+      dependencies.add(removeCWD(dep));
+    }
+  }
+
+  if ('entries' in obj) {
+    for (let entry of obj.entries) {
+      collectDependencies(dependencies, entry);
+    }
+  }
+
+  if ('module' in obj) {
+    collectDependencies(dependencies, obj.module);
+  }
 }
 
 async function expectToMatchSnapshot(stats) {
   const errors = stats.compilation.errors.map(cleanErrorStack);
   const warnings = stats.compilation.warnings.map(cleanErrorStack);
+  const dependencies = new Set();
+
+  collectDependencies(dependencies, stats.compilation);
 
   expect(errors).toMatchSnapshot('errors');
   expect(warnings).toMatchSnapshot('warnings');
+  expect(dependencies).toMatchSnapshot('dependencies');
 
   const assetPath = stats.compilation.assets['index.js'].existsAt;
   try {
