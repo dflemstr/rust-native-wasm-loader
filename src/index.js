@@ -66,7 +66,6 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
   await execAsync(
     `wasm-bindgen ${wasmFile} --out-dir ${moduleDir}${typescript ? ' --typescript --nodejs' : ''}`);
 
-  let contents = await fse.readFile(suffixlessPath + '.js', 'utf-8');
 
   if (wasm2es6js) {
     const glueWasmPath = suffixlessPath + '_wasm.wasm';
@@ -74,21 +73,42 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
 
     await execAsync(`wasm2es6js ${glueWasmPath} -o ${glueJsPath} --base64`);
 
-    contents += 'export const wasmBooted = wasm.booted\n';
   }
 
   if (typescript) {
-    const typescriptDeclaration = suffixlessPath + '.d.ts';
-    self.addDependency(typescriptDeclaration);
-    const includeRequest = loaderUtils.stringifyRequest(self, typescriptDeclaration);
-    contents = `/// <reference path=${includeRequest} />\n` + contents;
+    const tsdPath = suffixlessPath + '.d.ts';
+    const jsPath = suffixlessPath + '.js';
+    const wasmPath = suffixlessPath + '_wasm';
+
+    self.addDependency(jsPath);
+    self.addDependency(tsdPath);
+    self.addDependency(wasmPath);
+
+    const jsRequest = loaderUtils.stringifyRequest(self, jsPath);
+    const tsdRequest = loaderUtils.stringifyRequest(self, tsdPath);
+    const wasmRequest = loaderUtils.stringifyRequest(self, wasmPath);
+
+    let contents = `
+/// <reference path=${tsdRequest} />
+export * from ${jsRequest};
+`;
+    if (wasm2es6js) {
+      contents += `
+import * as wasm from ${wasmRequest};
+export const wasmBooted: Promise<boolean> = wasm.booted`;
+    }
+    return contents;
+  } else {
+    let contents = await fse.readFile(suffixlessPath + '.js', 'utf-8');
+    if (wasm2es6js) {
+      contents += 'export const wasmBooted = wasm.booted\n';
+    }
+    const wasmImport = suffixlessPath + '_wasm';
+    const includeRequest = loaderUtils.stringifyRequest(self, wasmImport);
+
+    contents = contents.replace(`from './${path.basename(wasmImport)}'`, `from ${includeRequest}`);
+    return contents;
   }
-
-  const wasmImport = suffixlessPath + '_wasm';
-  const includeRequest = loaderUtils.stringifyRequest(self, wasmImport);
-
-  contents = contents.replace(`from './${path.basename(wasmImport)}'`, `from ${includeRequest}`);
-  return contents;
 };
 
 const loadCargoWeb = async function (self, {release, name, target, regExp}, srcDir) {
