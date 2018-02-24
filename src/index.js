@@ -80,14 +80,6 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
     const jsPath = suffixlessPath + '.js';
     const wasmPath = suffixlessPath + (wasm2es6js ? '_wasm.js' : '_wasm.wasm');
 
-    self.addDependency(jsPath);
-    self.addDependency(tsdPath);
-    // XXX(dflemstr): This causes endless re-compiles, see https://github.com/webpack/watchpack/issues/25
-    // We thus need to ignore this dependency in case we are using wasm2es6js
-    if (!wasm2es6js) {
-      self.addDependency(wasmPath);
-    }
-
     const jsRequest = loaderUtils.stringifyRequest(self, jsPath);
     const tsdRequest = loaderUtils.stringifyRequest(self, tsdPath);
     const wasmRequest = loaderUtils.stringifyRequest(self, wasmPath);
