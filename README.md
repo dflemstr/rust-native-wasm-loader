@@ -74,6 +74,10 @@ loadWasm().then(result => {
     (or typescript).
       - `wasm2es6js`: `boolean`; use `wasm2es6js` to inline the wasm file into generated Javascript.
         Useful if webpack is not configured to load wasm files via some other loader.
+      - `typescript`: `boolean`; emit a typescript declaration file as part of the build.  This file
+        will automatically be referenced, and in a way that `ts-loader` will pick it up but it's
+        still possible to treat the output from this loader like a normal Javascript module
+        compatible with `babel-loader`.
   - `cargoWeb`: `boolean`; use `cargo-web` to compile the project instead of only building a `wasm`
     module.  Defaults to `false`.
       - `name`: `string`; the file name to use for emitting the wasm file for `cargo-web`, e.g.

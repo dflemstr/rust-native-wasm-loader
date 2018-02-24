@@ -17,7 +17,7 @@ describe('rust-native-wasm-loader', () => {
       loader: 'wasm-loader'
     }];
 
-    const stats = await runLoader('simple', 'simple', options, preRules);
+    const stats = await runLoader('simple.js', 'simple', options, preRules);
 
     await expectToMatchSnapshot(stats);
   });
@@ -36,7 +36,7 @@ describe('rust-native-wasm-loader', () => {
     // Run clean to ensure that the warning is generated every time
     await execAsync('cargo clean', {cwd: path.resolve(__dirname, 'fixtures', 'mywarninglib')});
 
-    const stats = await runLoader('warning', 'warning', options, preRules);
+    const stats = await runLoader('warning.js', 'warning', options, preRules);
 
     await expectToMatchSnapshot(stats);
   });
@@ -48,7 +48,7 @@ describe('rust-native-wasm-loader', () => {
       release: true,
     };
 
-    const stats = await runLoader('error', 'error', options);
+    const stats = await runLoader('error.js', 'error', options);
 
     await expectToMatchSnapshot(stats);
   });
@@ -65,7 +65,7 @@ describe('rust-native-wasm-loader', () => {
       loader: 'wasm-loader'
     }];
 
-    const stats = await runLoader('simple', 'simple-gc', options, preRules);
+    const stats = await runLoader('simple.js', 'simple-gc', options, preRules);
 
     await expectToMatchSnapshot(stats);
   });
@@ -79,7 +79,7 @@ describe('rust-native-wasm-loader', () => {
       name: '[name].[hash:8].wasm',
     };
 
-    const stats = await runLoader('stdweb', 'stdweb', options);
+    const stats = await runLoader('stdweb.js', 'stdweb', options);
 
     await expectToMatchSnapshot(stats);
   });
@@ -93,18 +93,59 @@ describe('rust-native-wasm-loader', () => {
       wasm2es6js: true,
     };
 
-    const otherRules = [
-      {
-        test: /\.(js|jsx|mjs)$/,
-        include: path.resolve(__dirname, 'src'),
-        loader: 'babel-loader',
-        options: {
-          compact: true,
-        },
-      },
-    ];
+    const stats = await runLoader('wasmbindgen.js', 'wasmbindgen', options, []);
 
-    const stats = await runLoader('wasmbindgen', 'wasmbindgen', options, [], otherRules);
+    await expectToMatchSnapshot(stats);
+  });
+
+  it('loads a wasm-bindgen project with typescript support', async () => {
+    jest.setTimeout(400000);
+
+    const options = {
+      release: true,
+      wasmBindgen: true,
+      wasm2es6js: true,
+      typescript: true,
+    };
+
+    const otherRules = [{
+      test: /\.(js|rs|ts)$/,
+      use: [{
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.rs$/],
+          onlyCompileBundledFiles: true
+        }
+      }]
+    }];
+
+    const stats = await runLoader('wasmbindgen.ts', 'wasmbindgen-ts', options, [], otherRules);
+
+    await expectToMatchSnapshot(stats);
+  });
+
+  it('loads a wasm-bindgen project with typescript support and a type error', async () => {
+    jest.setTimeout(400000);
+
+    const options = {
+      release: true,
+      wasmBindgen: true,
+      wasm2es6js: true,
+      typescript: true,
+    };
+
+    const otherRules = [{
+      test: /\.(js|rs|ts)$/,
+      use: [{
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.rs$/],
+          onlyCompileBundledFiles: true
+        }
+      }]
+    }];
+
+    const stats = await runLoader('wasmbindgen-type-error.ts', 'wasmbindgen-ts', options, [], otherRules);
 
     await expectToMatchSnapshot(stats);
   });
@@ -115,7 +156,7 @@ function removeCWD(str) {
 }
 
 function cleanErrorStack(error) {
-  return removeCWD(error.toString()).split('\n').slice(0, 1).join('\n');
+  return removeCWD(error.message).split('\n').filter(l => !l.match(/^\s+at\s/)).join('\n');
 }
 
 function collectDependencies(dependencies, obj) {
@@ -169,7 +210,7 @@ async function expectToMatchSnapshot(stats) {
 function runLoader(fixture, test, options, preRules = [], otherRules = []) {
   const config = {
     context: path.resolve(__dirname, 'fixtures'),
-    entry: `./${fixture}.js`,
+    entry: `./${fixture}`,
     target: 'node',
     output: {
       path: path.resolve(__dirname, 'outputs', test),

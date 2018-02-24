@@ -24,9 +24,19 @@ Set {
 
 exports[`rust-native-wasm-loader loads a simple cargo project with errors: errors 1`] = `
 Array [
-  "ModuleBuildError: Module build failed: Error: cargo build failed",
-  "ModuleError: error: aborting due to previous error",
-  "ModuleError: error[E0277]: cannot add \`&str\` to \`{integer}\`",
+  "Module build failed: Error: cargo build failed",
+  "error: aborting due to previous error
+
+",
+  "error[E0277]: cannot add \`&str\` to \`{integer}\`
+ --> src/lib.rs:2:7
+  |
+2 |     1 + \\"two\\"
+  |       ^ no implementation for \`{integer} + &str\`
+  |
+  = help: the trait \`std::ops::Add<&str>\` is not implemented for \`{integer}\`
+
+",
 ]
 `;
 
@@ -48,7 +58,15 @@ exports[`rust-native-wasm-loader loads a simple cargo project with warnings: out
 
 exports[`rust-native-wasm-loader loads a simple cargo project with warnings: warnings 1`] = `
 Array [
-  "ModuleWarning: warning: unused variable: \`b\`",
+  "warning: unused variable: \`b\`
+ --> src/lib.rs:2:20
+  |
+2 | pub fn add(a: i32, b: i32) -> i32 { // Warning: unused variable b
+  |                    ^ help: consider using \`_b\` instead
+  |
+  = note: #[warn(unused_variables)] on by default
+
+",
 ]
 `;
 
@@ -81,6 +99,49 @@ exports[`rust-native-wasm-loader loads a simple cargo project: errors 1`] = `Arr
 exports[`rust-native-wasm-loader loads a simple cargo project: output 1`] = `3`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project: warnings 1`] = `Array []`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: dependencies 1`] = `
+Set {
+  "node_modules/@types/node/index.d.ts",
+  "node_modules/@types/node/inspector.d.ts",
+  "node_modules/typescript/lib/lib.d.ts",
+  "test/fixtures/mywasmbindgenlib/src/lib.rs",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_wasm.js",
+  "test/fixtures/wasmbindgen-type-error.ts",
+}
+`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: errors 1`] = `
+Array [
+  "[90m[tsl] [39m[1m[31mERROR[39m[22m[1m[31m in [39m[22m[1m[36mtest/fixtures/wasmbindgen-type-error.ts(5,10)[39m[22m
+[1m[31m      TS2554: Expected 2 arguments, but got 3.[39m[22m",
+]
+`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: output 1`] = `"Hello, World!"`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: warnings 1`] = `Array []`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: dependencies 1`] = `
+Set {
+  "node_modules/@types/node/index.d.ts",
+  "node_modules/@types/node/inspector.d.ts",
+  "node_modules/typescript/lib/lib.d.ts",
+  "test/fixtures/mywasmbindgenlib/src/lib.rs",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_wasm.js",
+  "test/fixtures/wasmbindgen.ts",
+}
+`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: errors 1`] = `Array []`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: output 1`] = `"Hello, World!"`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: warnings 1`] = `Array []`;
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project: dependencies 1`] = `
 Set {
