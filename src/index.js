@@ -39,6 +39,7 @@ const DEFAULT_OPTIONS = {
   regExp: undefined,
   wasmBindgen: false,
   wasm2es6js: false,
+  typescript: false,
 };
 
 const execPermissive = async function (cmd, srcDir) {
@@ -50,7 +51,7 @@ const execPermissive = async function (cmd, srcDir) {
   }
 };
 
-const loadWasmBindgen = async function (self, {release, target, wasm2es6js}, srcDir) {
+const loadWasmBindgen = async function (self, {release, target, wasm2es6js, typescript}, srcDir) {
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
@@ -62,7 +63,8 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js}, src
   const suffixlessPath = wasmFile.slice(0, -'.wasm'.length);
   const moduleDir = path.dirname(wasmFile);
 
-  await execAsync(`wasm-bindgen ${wasmFile} --out-dir ${moduleDir}`);
+  await execAsync(
+    `wasm-bindgen ${wasmFile} --out-dir ${moduleDir}${typescript ? ' --typescript --nodejs' : ''}`);
 
   let contents = await fse.readFile(suffixlessPath + '.js', 'utf-8');
 
@@ -73,6 +75,13 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js}, src
     await execAsync(`wasm2es6js ${glueWasmPath} -o ${glueJsPath} --base64`);
 
     contents += 'export const wasmBooted = wasm.booted\n';
+  }
+
+  if (typescript) {
+    const typescriptDeclaration = suffixlessPath + '.d.ts';
+    self.addDependency(typescriptDeclaration);
+    const includeRequest = loaderUtils.stringifyRequest(self, typescriptDeclaration);
+    contents = `/// <reference path=${includeRequest} />\n` + contents;
   }
 
   const wasmImport = suffixlessPath + '_wasm';
