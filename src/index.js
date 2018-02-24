@@ -78,7 +78,7 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
   if (typescript) {
     const tsdPath = suffixlessPath + '.d.ts';
     const jsPath = suffixlessPath + '.js';
-    const wasmPath = suffixlessPath + '_wasm';
+    const wasmPath = suffixlessPath + (wasm2es6js ? '_wasm.js' : '_wasm.wasm');
 
     self.addDependency(jsPath);
     self.addDependency(tsdPath);
