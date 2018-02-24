@@ -95,7 +95,8 @@ export * from ${jsRequest};
     if (wasm2es6js) {
       contents += `
 import * as wasm from ${wasmRequest};
-export const wasmBooted: Promise<boolean> = wasm.booted`;
+export const wasmBooted: Promise<boolean> = wasm.booted
+`;
     }
     return contents;
   } else {
