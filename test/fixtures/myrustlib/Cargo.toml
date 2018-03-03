@@ -1,7 +1,7 @@
 [package]
+authors = ["David Flemström <david.flemstrom@gmail.com>"]
 name = "myrustlib"
 version = "0.1.0"
-authors = ["David Flemström <david.flemstrom@gmail.com>"]
 
 [lib]
 crate-type = ["cdylib"]
