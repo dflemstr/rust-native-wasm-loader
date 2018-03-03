@@ -149,6 +149,32 @@ describe('rust-native-wasm-loader', () => {
 
     await expectToMatchSnapshot(stats);
   });
+
+  it('loads a wasm-bindgen project with typescript support and a rust error', async () => {
+    jest.setTimeout(400000);
+
+    const options = {
+      release: true,
+      wasmBindgen: true,
+      wasm2es6js: true,
+      typescript: true,
+    };
+
+    const otherRules = [{
+      test: /\.(js|rs|ts)$/,
+      use: [{
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.rs$/],
+          onlyCompileBundledFiles: true
+        }
+      }]
+    }];
+
+    const stats = await runLoader('wasmbindgen-rust-error.ts', 'wasmbindgen-ts', options, [], otherRules);
+
+    await expectToMatchSnapshot(stats);
+  });
 });
 
 function removeCWD(str) {

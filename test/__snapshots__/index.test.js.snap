@@ -100,11 +100,50 @@ exports[`rust-native-wasm-loader loads a simple cargo project: output 1`] = `3`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project: warnings 1`] = `Array []`;
 
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: dependencies 1`] = `
+Set {
+  "node_modules/@types/node/index.d.ts",
+  "node_modules/@types/node/inspector.d.ts",
+  "node_modules/typescript/lib/lib.d.ts",
+  "test/fixtures/mywasmbindgenerrorlib/src/lib.rs",
+  "test/fixtures/mywasmbindgenerrorlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
+  "test/fixtures/wasmbindgen-rust-error.ts",
+}
+`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: errors 1`] = `
+Array [
+  "[90m[tsl] [39m[1m[31mERROR[39m[22m[1m[31m in [39m[22m[1m[36mtest/fixtures/wasmbindgen-rust-error.ts(1,33)[39m[22m
+[1m[31m      TS2306: File 'test/fixtures/mywasmbindgenerrorlib/src/lib.rs.ts' is not a module.[39m[22m",
+  "Cargo build failed",
+  "error: aborting due to previous error
+
+",
+  "error[E0369]: binary operation \`+\` cannot be applied to type \`&str\`
+  --> src/lib.rs:10:5
+   |
+10 |     a + b
+   |     ^^^^^ \`+\` can't be used to concatenate two \`&str\` strings
+help: \`to_owned()\` can be used to create an owned \`String\` from a string reference. String concatenation appends the string on the right to the string on the left and may require reallocation. This requires ownership of the string on the left
+   |
+10 |     a.to_owned() + b
+   |     ^^^^^^^^^^^^
+
+",
+]
+`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: failure 1`] = `"Cargo build failed"`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: warnings 1`] = `Array []`;
+
 exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: dependencies 1`] = `
 Set {
   "node_modules/@types/node/index.d.ts",
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
+  "test/fixtures/mywasmbindgenerrorlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
@@ -129,6 +168,7 @@ Set {
   "node_modules/@types/node/index.d.ts",
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
+  "test/fixtures/mywasmbindgenerrorlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",

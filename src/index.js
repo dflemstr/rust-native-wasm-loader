@@ -239,7 +239,7 @@ const load = async function (self) {
     } catch (e) {
       if (e instanceof BuildError) {
         self.emitError(e);
-        return `throw new Error("${JSON.stringify(e.message)}");\n`;
+        return `throw new Error(${JSON.stringify(e.message)});\n`;
       } else {
         throw e;
       }
