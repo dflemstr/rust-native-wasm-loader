@@ -1,8 +1,16 @@
-import { promisify } from 'util';
+import { promisify, inherits } from 'util';
 import { exec } from 'child_process';
 import fse from 'fs-extra';
 import loaderUtils from 'loader-utils';
 import path from 'path';
+
+function BuildError(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+}
+
+inherits(BuildError, Error);
 
 const execAsync = promisify(exec);
 
@@ -58,7 +66,7 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
   const {wasmFile} = await handleCargo(self, result);
 
   if (!wasmFile) {
-    throw new Error('No wasm file produced as build output');
+    throw new BuildError('No wasm file produced as build output');
   }
   const suffixlessPath = wasmFile.slice(0, -'.wasm'.length);
   const moduleDir = path.dirname(wasmFile);
@@ -66,13 +74,11 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
   await execAsync(
     `wasm-bindgen ${wasmFile} --out-dir ${moduleDir}${typescript ? ' --typescript --nodejs' : ''}`);
 
-
   if (wasm2es6js) {
     const glueWasmPath = suffixlessPath + '_wasm.wasm';
     const glueJsPath = suffixlessPath + '_wasm.js';
 
     await execAsync(`wasm2es6js ${glueWasmPath} -o ${glueJsPath} --base64`);
-
   }
 
   if (typescript) {
@@ -115,10 +121,10 @@ const loadCargoWeb = async function (self, {release, name, target, regExp}, srcD
   const {wasmFile, jsFile} = await handleCargo(self, result);
 
   if (!wasmFile) {
-    throw new Error('No wasm file produced as build output');
+    throw new BuildError('No wasm file produced as build output');
   }
   if (!jsFile) {
-    throw new Error('No js file produced as build output');
+    throw new BuildError('No js file produced as build output');
   }
 
   const jsData = await fse.readFile(jsFile, 'utf-8');
@@ -146,7 +152,7 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
   let {wasmFile} = await handleCargo(self, result);
 
   if (!wasmFile) {
-    throw new Error('No wasm file produced as build output');
+    throw new BuildError('No wasm file produced as build output');
   }
 
   if (gc) {
@@ -194,7 +200,7 @@ const handleCargo = async function (self, result) {
   }
 
   if (hasError) {
-    throw new Error("cargo build failed");
+    throw new BuildError('Cargo build failed');
   }
 
   const depFile = wasmFile.slice(0, -'.wasm'.length) + '.d';
@@ -213,7 +219,7 @@ const handleCargo = async function (self, result) {
 const load = async function (self) {
   const srcDir = await findSrcDir(self.resourcePath);
   if (!srcDir) {
-    throw new Error('No Cargo.toml file found in any parent directory.');
+    throw new BuildError('No Cargo.toml file found in any parent directory.');
   }
   self.addDependency(path.join(srcDir, 'Cargo.toml'));
 
@@ -221,10 +227,23 @@ const load = async function (self) {
   const cargoWeb = opts.cargoWeb;
   const wasmBindgen = opts.wasmBindgen;
 
-  if (wasmBindgen) {
-    return await loadWasmBindgen(self, opts, srcDir);
-  } else if (cargoWeb) {
-    return await loadCargoWeb(self, opts, srcDir);
+  if (wasmBindgen || cargoWeb) {
+    try {
+      if (wasmBindgen) {
+        return await loadWasmBindgen(self, opts, srcDir);
+      } else if (cargoWeb) {
+        return await loadCargoWeb(self, opts, srcDir);
+      } else {
+        throw new Error("Unreachable code");
+      }
+    } catch (e) {
+      if (e instanceof BuildError) {
+        self.emitError(e);
+        return `throw new Error("${JSON.stringify(e.message)}");\n`;
+      } else {
+        throw e;
+      }
+    }
   } else {
     return await loadRaw(self, opts, srcDir);
   }
