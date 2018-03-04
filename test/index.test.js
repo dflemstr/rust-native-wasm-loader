@@ -114,7 +114,8 @@ describe('rust-native-wasm-loader', () => {
         loader: 'ts-loader',
         options: {
           appendTsSuffixTo: [/\.rs$/],
-          onlyCompileBundledFiles: true
+          onlyCompileBundledFiles: true,
+          colors: false
         }
       }]
     }];
@@ -140,7 +141,8 @@ describe('rust-native-wasm-loader', () => {
         loader: 'ts-loader',
         options: {
           appendTsSuffixTo: [/\.rs$/],
-          onlyCompileBundledFiles: true
+          onlyCompileBundledFiles: true,
+          colors: false
         }
       }]
     }];
@@ -166,7 +168,8 @@ describe('rust-native-wasm-loader', () => {
         loader: 'ts-loader',
         options: {
           appendTsSuffixTo: [/\.rs$/],
-          onlyCompileBundledFiles: true
+          onlyCompileBundledFiles: true,
+          colors: false
         }
       }]
     }];

@@ -36,6 +36,7 @@ Array [
   |
   = help: the trait \`std::ops::Add<&str>\` is not implemented for \`{integer}\`
 
+If you want more information on this error, try using \\"rustc --explain E0277\\"
 ",
 ]
 `;
@@ -114,8 +115,8 @@ Set {
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: errors 1`] = `
 Array [
-  "[90m[tsl] [39m[1m[31mERROR[39m[22m[1m[31m in [39m[22m[1m[36mtest/fixtures/wasmbindgen-rust-error.ts(1,33)[39m[22m
-[1m[31m      TS2306: File 'test/fixtures/mywasmbindgenerrorlib/src/lib.rs.ts' is not a module.[39m[22m",
+  "[tsl] ERROR in test/fixtures/wasmbindgen-rust-error.ts(1,33)
+      TS2306: File 'test/fixtures/mywasmbindgenerrorlib/src/lib.rs.ts' is not a module.",
   "Cargo build failed",
   "error: aborting due to previous error
 
@@ -130,6 +131,7 @@ help: \`to_owned()\` can be used to create an owned \`String\` from a string ref
 10 |     a.to_owned() + b
    |     ^^^^^^^^^^^^
 
+If you want more information on this error, try using \\"rustc --explain E0369\\"
 ",
 ]
 `;
@@ -154,8 +156,8 @@ Set {
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: errors 1`] = `
 Array [
-  "[90m[tsl] [39m[1m[31mERROR[39m[22m[1m[31m in [39m[22m[1m[36mtest/fixtures/wasmbindgen-type-error.ts(5,10)[39m[22m
-[1m[31m      TS2554: Expected 2 arguments, but got 3.[39m[22m",
+  "[tsl] ERROR in test/fixtures/wasmbindgen-type-error.ts(5,10)
+      TS2554: Expected 2 arguments, but got 3.",
 ]
 `;
 
