@@ -107,7 +107,6 @@ Set {
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
   "test/fixtures/mywasmbindgenerrorlib/src/lib.rs",
-  "test/fixtures/mywasmbindgenerrorlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/wasmbindgen-rust-error.ts",
 }
@@ -145,7 +144,6 @@ Set {
   "node_modules/@types/node/index.d.ts",
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
-  "test/fixtures/mywasmbindgenerrorlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
@@ -170,7 +168,6 @@ Set {
   "node_modules/@types/node/index.d.ts",
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
-  "test/fixtures/mywasmbindgenerrorlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
