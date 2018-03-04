@@ -13,5 +13,5 @@ before_install:
   - cargo install --git https://github.com/alexcrichton/wasm-bindgen
 
 script:
-  - yarn test
+  - travis_wait yarn test
   - for example in simple advanced-stdweb advanced-wasm-bindgen; do (cd examples/$example; yarn; yarn build); done
