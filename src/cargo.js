@@ -10,7 +10,12 @@ export const findSrcDir = async function (childPath) {
     if (await fse.pathExists(maybeCargoFile)) {
       return candidate;
     }
-    candidate = path.dirname(candidate);
+
+    const newCandidate = path.dirname(candidate);
+    if (newCandidate === candidate) {
+      break;
+    }
+    candidate = newCandidate;
   }
 
   return null;
