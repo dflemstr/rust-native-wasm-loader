@@ -1,16 +1,19 @@
 language: node_js
 node_js: 8
 cache:
+  directories:
+    - .cargo-install
   cargo: true
-  yarn: true
+  # Yarn cache blows up to be too big
+  #yarn: true
 
 before_install:
   - export PATH="$HOME/.cargo/bin:$PATH"
   - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
   - rustup target add wasm32-unknown-unknown --toolchain nightly
-  - cargo install cargo-web
-  - cargo install --git https://github.com/alexcrichton/wasm-gc
-  - cargo install --git https://github.com/alexcrichton/wasm-bindgen
+  - CARGO_TARGET_DIR=.cargo-install cargo install cargo-web
+  - CARGO_TARGET_DIR=.cargo-install cargo install --git https://github.com/alexcrichton/wasm-gc
+  - CARGO_TARGET_DIR=.cargo-install cargo install --git https://github.com/alexcrichton/wasm-bindgen
 
 script:
   - travis_wait yarn test
