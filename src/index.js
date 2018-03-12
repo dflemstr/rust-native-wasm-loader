@@ -33,8 +33,8 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
     `wasm-bindgen ${wasmFile} --out-dir ${moduleDir}${typescript ? ' --typescript --nodejs' : ''}`);
 
   if (wasm2es6js) {
-    const glueWasmPath = suffixlessPath + '_wasm.wasm';
-    const glueJsPath = suffixlessPath + '_wasm.js';
+    const glueWasmPath = suffixlessPath + '_bg.wasm';
+    const glueJsPath = suffixlessPath + '_bg.js';
 
     await execAsync(`wasm2es6js ${glueWasmPath} -o ${glueJsPath} --base64`);
   }
@@ -42,7 +42,7 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
   if (typescript) {
     const tsdPath = suffixlessPath + '.d.ts';
     const jsPath = suffixlessPath + '.js';
-    const wasmPath = suffixlessPath + (wasm2es6js ? '_wasm.js' : '_wasm.wasm');
+    const wasmPath = suffixlessPath + (wasm2es6js ? '_bg.js' : '_bg.wasm');
 
     const jsRequest = loaderUtils.stringifyRequest(self, jsPath);
     const tsdRequest = loaderUtils.stringifyRequest(self, tsdPath);
@@ -64,7 +64,7 @@ export const wasmBooted: Promise<boolean> = wasm.booted
     if (wasm2es6js) {
       contents += 'export const wasmBooted = wasm.booted\n';
     }
-    const wasmImport = suffixlessPath + '_wasm';
+    const wasmImport = suffixlessPath + '_bg';
     const includeRequest = loaderUtils.stringifyRequest(self, wasmImport);
 
     contents = contents.replace(`from './${path.basename(wasmImport)}'`, `from ${includeRequest}`);

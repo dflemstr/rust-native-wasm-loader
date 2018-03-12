@@ -147,7 +147,7 @@ Set {
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_wasm.js",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_bg.js",
   "test/fixtures/wasmbindgen-type-error.ts",
 }
 `;
@@ -171,7 +171,7 @@ Set {
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_wasm.js",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_bg.js",
   "test/fixtures/wasmbindgen.ts",
 }
 `;
@@ -187,7 +187,7 @@ Set {
   "test/fixtures/mywasmbindgenlib/Cargo.toml",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_wasm.js",
+  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_bg.js",
   "test/fixtures/wasmbindgen.js",
 }
 `;
