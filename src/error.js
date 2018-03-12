@@ -1,4 +1,4 @@
-import { inherits } from "util";
+import { inherits } from 'util';
 
 export function BuildError(message) {
   Error.captureStackTrace(this, this.constructor);
