@@ -2,8 +2,9 @@ import fse from 'fs-extra';
 import loaderUtils from 'loader-utils';
 import path from 'path';
 import { BuildError } from './error';
-import { execPermissive, execAsync } from './util';
-import { cargoCommand, findSrcDir, handleCargo } from "./cargo";
+import { execPermissive, execAsync, clapVersion } from './util';
+import { cargoCommand, findSrcDir, handleCargo } from './cargo';
+import * as semver from 'semver';
 
 const DEFAULT_OPTIONS = {
   release: false,
@@ -17,7 +18,17 @@ const DEFAULT_OPTIONS = {
   typescript: false,
 };
 
+const SUPPORTED_WASM_BINDGEN_VERSION = '^0.1.1';
+const SUPPORTED_CARGO_WEB_VERSION = '^0.6.8';
+
 const loadWasmBindgen = async function (self, {release, target, wasm2es6js, typescript}, srcDir) {
+  const wasmBindgenVersion = await clapVersion('wasm-bindgen', srcDir);
+
+  if (!semver.satisfies(wasmBindgenVersion, SUPPORTED_WASM_BINDGEN_VERSION)) {
+    throw new BuildError(
+      `wasm-bindgen version not supported; got ${wasmBindgenVersion} but need ${SUPPORTED_WASM_BINDGEN_VERSION}`);
+  }
+
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
@@ -73,6 +84,13 @@ export const wasmBooted: Promise<boolean> = wasm.booted
 };
 
 const loadCargoWeb = async function (self, {release, name, target, regExp}, srcDir) {
+  const cargoWebVersion = await clapVersion('cargo web', srcDir);
+
+  if (!semver.satisfies(cargoWebVersion, SUPPORTED_CARGO_WEB_VERSION)) {
+    throw new BuildError(
+      `cargo-web version not supported; got ${cargoWebVersion} but need ${SUPPORTED_CARGO_WEB_VERSION}`);
+  }
+
   const cmd = cargoCommand(target, release, ['web']);
   const result = await execPermissive(cmd, srcDir);
 
@@ -140,7 +158,7 @@ const load = async function (self) {
       } else if (cargoWeb) {
         return await loadCargoWeb(self, opts, srcDir);
       } else {
-        throw new Error("Unreachable code");
+        throw new Error('Unreachable code');
       }
     } catch (e) {
       if (e instanceof BuildError) {
