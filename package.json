@@ -24,6 +24,7 @@
     "webpack": "^3.10.0"
   },
   "scripts": {
+    "develop": "babel src --out-dir dist --watch",
     "build": "babel src --out-dir dist",
     "prepublish": "npm run build",
     "test": "jest"

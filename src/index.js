@@ -55,11 +55,12 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
-  const {wasmFile} = await handleCargo(self, result);
+  const { wasmFile, error } = await handleCargo(self, result);
 
-  if (!wasmFile) {
-    throw new Error('No wasm file produced as build output');
+  if (error) {
+    throw error;
   }
+
   const suffixlessPath = wasmFile.slice(0, -'.wasm'.length);
   const moduleDir = path.dirname(wasmFile);
 
@@ -112,13 +113,10 @@ const loadCargoWeb = async function (self, {release, name, target, regExp}, srcD
   const cmd = cargoCommand(target, release, ['web']);
   const result = await execPermissive(cmd, srcDir);
 
-  const {wasmFile, jsFile} = await handleCargo(self, result);
+  const { error, wasmFile, jsFile } = await handleCargo(self, result);
 
-  if (!wasmFile) {
-    throw new Error('No wasm file produced as build output');
-  }
-  if (!jsFile) {
-    throw new Error('No js file produced as build output');
+  if (error) {
+    throw error;
   }
 
   const jsData = await fse.readFile(jsFile, 'utf-8');
@@ -143,10 +141,10 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
-  let {wasmFile} = await handleCargo(self, result);
+  let { error, wasmFile } = await handleCargo(self, result);
 
-  if (!wasmFile) {
-    throw new Error('No wasm file produced as build output');
+  if (error) {
+    throw error;
   }
 
   if (gc) {
@@ -158,7 +156,18 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
   return await fse.readFile(wasmFile);
 };
 
-const handleCargo = async function (self, result) {
+const handleCargo = async (self, result) => {
+  // result seems to not have a code, when the compilations succeeds, so we'll
+  // have to check existence first
+  if (result.code && result.code !== 0) {
+    return { error: makeCargoError(result) };
+  }
+  else {
+    return handleCargoSuccess(self, result);
+  }
+};
+
+const handleCargoSuccess = async (self, result) => {
   let wasmFile;
   let jsFile;
   let hasError = false;
@@ -207,7 +216,15 @@ const handleCargo = async function (self, result) {
     }
   }
 
-  return {wasmFile, jsFile};
+  return { wasmFile, jsFile };
+};
+
+const makeCargoError = result => {
+  const tmpl = `Cargo encountered an error while compiling your crate
+${result.stderr}`;
+  const e = new Error(tmpl);
+  e.name = "CargoError";
+  return e;
 };
 
 const load = async function (self) {
