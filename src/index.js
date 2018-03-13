@@ -1,34 +1,10 @@
-import { promisify } from 'util';
-import { exec } from 'child_process';
 import fse from 'fs-extra';
 import loaderUtils from 'loader-utils';
 import path from 'path';
-
-const execAsync = promisify(exec);
-
-const findSrcDir = async function (childPath) {
-  let candidate = childPath;
-
-  while (candidate !== path.parse(candidate).root) {
-    const maybeCargoFile = path.join(candidate, 'Cargo.toml');
-    if (await fse.pathExists(maybeCargoFile)) {
-      return candidate;
-    }
-    candidate = path.dirname(candidate);
-  }
-
-  return null;
-};
-
-const cargoCommand = (target, release, subcmd = []) => {
-  const cmd = ['cargo', ...subcmd, 'build', '--message-format=json', '--target=' + target];
-
-  if (release) {
-    cmd.push('--release');
-  }
-
-  return cmd.join(' ');
-};
+import { BuildError } from './error';
+import { execPermissive, execAsync, clapVersion } from './util';
+import { cargoCommand, findSrcDir, handleCargo } from './cargo';
+import * as semver from 'semver';
 
 const DEFAULT_OPTIONS = {
   release: false,
@@ -42,24 +18,21 @@ const DEFAULT_OPTIONS = {
   typescript: false,
 };
 
-const execPermissive = async function (cmd, srcDir) {
-  try {
-    let options = {cwd: srcDir, encoding: 'utf-8', maxBuffer: 2 * 1024 * 1024 * 1024};
-    return await execAsync(cmd, options);
-  } catch (e) {
-    return e;
-  }
-};
+const SUPPORTED_WASM_BINDGEN_VERSION = '^0.1.1';
+const SUPPORTED_CARGO_WEB_VERSION = '^0.6.8';
 
 const loadWasmBindgen = async function (self, {release, target, wasm2es6js, typescript}, srcDir) {
+  const wasmBindgenVersion = await clapVersion('wasm-bindgen', srcDir);
+
+  if (!semver.satisfies(wasmBindgenVersion, SUPPORTED_WASM_BINDGEN_VERSION)) {
+    throw new BuildError(
+      `wasm-bindgen version not supported; got ${wasmBindgenVersion} but need ${SUPPORTED_WASM_BINDGEN_VERSION}`);
+  }
+
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
-  const { wasmFile, error } = await handleCargo(self, result);
-
-  if (error) {
-    throw error;
-  }
+  const { wasmFile } = await handleCargo(self, result);
 
   const suffixlessPath = wasmFile.slice(0, -'.wasm'.length);
   const moduleDir = path.dirname(wasmFile);
@@ -67,19 +40,17 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
   await execAsync(
     `wasm-bindgen ${wasmFile} --out-dir ${moduleDir}${typescript ? ' --typescript --nodejs' : ''}`);
 
-
   if (wasm2es6js) {
-    const glueWasmPath = suffixlessPath + '_wasm.wasm';
-    const glueJsPath = suffixlessPath + '_wasm.js';
+    const glueWasmPath = suffixlessPath + '_bg.wasm';
+    const glueJsPath = suffixlessPath + '_bg.js';
 
     await execAsync(`wasm2es6js ${glueWasmPath} -o ${glueJsPath} --base64`);
-
   }
 
   if (typescript) {
     const tsdPath = suffixlessPath + '.d.ts';
     const jsPath = suffixlessPath + '.js';
-    const wasmPath = suffixlessPath + (wasm2es6js ? '_wasm.js' : '_wasm.wasm');
+    const wasmPath = suffixlessPath + (wasm2es6js ? '_bg.js' : '_bg.wasm');
 
     const jsRequest = loaderUtils.stringifyRequest(self, jsPath);
     const tsdRequest = loaderUtils.stringifyRequest(self, tsdPath);
@@ -101,7 +72,7 @@ export const wasmBooted: Promise<boolean> = wasm.booted
     if (wasm2es6js) {
       contents += 'export const wasmBooted = wasm.booted\n';
     }
-    const wasmImport = suffixlessPath + '_wasm';
+    const wasmImport = suffixlessPath + '_bg';
     const includeRequest = loaderUtils.stringifyRequest(self, wasmImport);
 
     contents = contents.replace(`from './${path.basename(wasmImport)}'`, `from ${includeRequest}`);
@@ -110,14 +81,17 @@ export const wasmBooted: Promise<boolean> = wasm.booted
 };
 
 const loadCargoWeb = async function (self, {release, name, target, regExp}, srcDir) {
+  const cargoWebVersion = await clapVersion('cargo web', srcDir);
+
+  if (!semver.satisfies(cargoWebVersion, SUPPORTED_CARGO_WEB_VERSION)) {
+    throw new BuildError(
+      `cargo-web version not supported; got ${cargoWebVersion} but need ${SUPPORTED_CARGO_WEB_VERSION}`);
+  }
+
   const cmd = cargoCommand(target, release, ['web']);
   const result = await execPermissive(cmd, srcDir);
 
-  const { error, wasmFile, jsFile } = await handleCargo(self, result);
-
-  if (error) {
-    throw error;
-  }
+  const { wasmFile, jsFile } = await handleCargo(self, result);
 
   const jsData = await fse.readFile(jsFile, 'utf-8');
   const wasmData = await fse.readFile(wasmFile);
@@ -141,11 +115,7 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
-  let { error, wasmFile } = await handleCargo(self, result);
-
-  if (error) {
-    throw error;
-  }
+  let { wasmFile } = await handleCargo(self, result);
 
   if (gc) {
     let gcWasmFile = wasmFile.substr(0, wasmFile.length - '.wasm'.length) + '.gc.wasm';
@@ -156,81 +126,10 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
   return await fse.readFile(wasmFile);
 };
 
-const handleCargo = async (self, result) => {
-  // result seems to not have a code, when the compilations succeeds, so we'll
-  // have to check existence first
-  if (result.code && result.code !== 0) {
-    return { error: makeCargoError(result) };
-  }
-  else {
-    return handleCargoSuccess(self, result);
-  }
-};
-
-const handleCargoSuccess = async (self, result) => {
-  let wasmFile;
-  let jsFile;
-  let hasError = false;
-  outer: for (let line of result.stdout.split('\n')) {
-    if (/^\s*$/.test(line)) {
-      continue;
-    }
-    const data = JSON.parse(line);
-    switch (data.reason) {
-      case 'compiler-message':
-        switch (data.message.level) {
-          case 'warning':
-            self.emitWarning(new Error(data.message.rendered));
-            break;
-          case 'error':
-            self.emitError(new Error(data.message.rendered));
-            hasError = true;
-            break;
-        }
-        break;
-      case 'compiler-artifact':
-        if (!wasmFile) {
-          wasmFile = data.filenames.find((p) => p.endsWith('.wasm'));
-        }
-        if (!jsFile) {
-          jsFile = data.filenames.find((p) => p.endsWith('.js'));
-        }
-        if (wasmFile) {
-          break outer;
-        }
-        break;
-    }
-  }
-
-  if (hasError) {
-    throw new Error("cargo build failed");
-  }
-
-  const depFile = wasmFile.slice(0, -'.wasm'.length) + '.d';
-  const depContents = await fse.readFile(depFile, 'utf-8');
-  for (let line of depContents.split('\n')) {
-    if (line.startsWith(wasmFile) || (jsFile && line.startsWith(jsFile))) {
-      for (let dep of line.split(/:\s+/)[1].split(/\s+/)) {
-        self.addDependency(dep);
-      }
-    }
-  }
-
-  return { wasmFile, jsFile };
-};
-
-const makeCargoError = result => {
-  const tmpl = `Cargo encountered an error while compiling your crate
-${result.stderr}`;
-  const e = new Error(tmpl);
-  e.name = "CargoError";
-  return e;
-};
-
 const load = async function (self) {
   const srcDir = await findSrcDir(self.resourcePath);
   if (!srcDir) {
-    throw new Error('No Cargo.toml file found in any parent directory.');
+    throw new BuildError('No Cargo.toml file found in any parent directory.');
   }
   self.addDependency(path.join(srcDir, 'Cargo.toml'));
 
@@ -238,10 +137,23 @@ const load = async function (self) {
   const cargoWeb = opts.cargoWeb;
   const wasmBindgen = opts.wasmBindgen;
 
-  if (wasmBindgen) {
-    return await loadWasmBindgen(self, opts, srcDir);
-  } else if (cargoWeb) {
-    return await loadCargoWeb(self, opts, srcDir);
+  if (wasmBindgen || cargoWeb) {
+    try {
+      if (wasmBindgen) {
+        return await loadWasmBindgen(self, opts, srcDir);
+      } else if (cargoWeb) {
+        return await loadCargoWeb(self, opts, srcDir);
+      } else {
+        throw new Error('Unreachable code');
+      }
+    } catch (e) {
+      if (e instanceof BuildError) {
+        self.emitError(e);
+        return `throw new Error(${JSON.stringify(e.message)});\n`;
+      } else {
+        throw e;
+      }
+    }
   } else {
     return await loadRaw(self, opts, srcDir);
   }

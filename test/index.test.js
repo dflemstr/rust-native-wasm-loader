@@ -114,7 +114,8 @@ describe('rust-native-wasm-loader', () => {
         loader: 'ts-loader',
         options: {
           appendTsSuffixTo: [/\.rs$/],
-          onlyCompileBundledFiles: true
+          onlyCompileBundledFiles: true,
+          colors: false
         }
       }]
     }];
@@ -140,12 +141,40 @@ describe('rust-native-wasm-loader', () => {
         loader: 'ts-loader',
         options: {
           appendTsSuffixTo: [/\.rs$/],
-          onlyCompileBundledFiles: true
+          onlyCompileBundledFiles: true,
+          colors: false
         }
       }]
     }];
 
     const stats = await runLoader('wasmbindgen-type-error.ts', 'wasmbindgen-ts', options, [], otherRules);
+
+    await expectToMatchSnapshot(stats);
+  });
+
+  it('loads a wasm-bindgen project with typescript support and a rust error', async () => {
+    jest.setTimeout(400000);
+
+    const options = {
+      release: true,
+      wasmBindgen: true,
+      wasm2es6js: true,
+      typescript: true,
+    };
+
+    const otherRules = [{
+      test: /\.(js|rs|ts)$/,
+      use: [{
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.rs$/],
+          onlyCompileBundledFiles: true,
+          colors: false
+        }
+      }]
+    }];
+
+    const stats = await runLoader('wasmbindgen-rust-error.ts', 'wasmbindgen-ts', options, [], otherRules);
 
     await expectToMatchSnapshot(stats);
   });

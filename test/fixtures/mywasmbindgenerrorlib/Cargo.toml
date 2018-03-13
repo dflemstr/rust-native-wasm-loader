@@ -1,7 +1,10 @@
 [package]
 authors = ["David Flemström <david.flemstrom@gmail.com>"]
-name = "simple"
+name = "mywasmbindgenerrorlib"
 version = "0.1.0"
+
+[dependencies.wasm-bindgen]
+git = "https://github.com/alexcrichton/wasm-bindgen"
 
 [lib]
 crate-type = ["cdylib"]
