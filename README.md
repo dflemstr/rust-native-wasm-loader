@@ -69,20 +69,21 @@ loadWasm().then(result => {
     requires installing [wasm-gc][].  Defaults to `false` and is a no-op in `wasmBindgen` or
     `cargoWeb` mode.
   - `target`: `string`; the Rust target to use; this defaults to `wasm32-unknown-unknown`
-  - `wasmBindgen`: `boolean`; use `wasm-bindgen` to post-process the wasm file.  This probably means
-    that you need to chain this loader with `babel-loader` as well since `wasm-bindgen` outputs ES6
-    (or typescript).
-      - `wasm2es6js`: `boolean`; use `wasm2es6js` to inline the wasm file into generated Javascript.
-        Useful if webpack is not configured to load wasm files via some other loader.
-      - `typescript`: `boolean`; emit a typescript declaration file as part of the build.  This file
-        will automatically be referenced, and in a way that `ts-loader` will pick it up but it's
-        still possible to treat the output from this loader like a normal Javascript module
-        compatible with `babel-loader`.
-  - `cargoWeb`: `boolean`; use `cargo-web` to compile the project instead of only building a `wasm`
-    module.  Defaults to `false`.
-      - `name`: `string`; the file name to use for emitting the wasm file for `cargo-web`, e.g.
-        `'static/wasm/[name].[hash:8].wasm'`.
-      - `regExp`: `string`; a regexp to extract additional variables for use in `name`.
+  - `wasmBindgen`: `boolean` or `object`; use `wasm-bindgen` to post-process the wasm file.  This
+    probably means that you need to chain this loader with `babel-loader` as well since
+    `wasm-bindgen` outputs ES6 (or typescript).
+      - `wasmBindgen.debug`: `boolean`; run `wasm-bindgen` in debug mode.
+      - `wasmBindgen.wasm2es6js`: `boolean`; use `wasm2es6js` to inline the wasm file into generated
+        Javascript.  Useful if webpack is not configured to load wasm files via some other loader.
+      - `wasmBindgen.typescript`: `boolean`; emit a typescript declaration file as part of the
+        build.  This file will automatically be referenced, and in a way that `ts-loader` will pick
+        it up but it's still possible to treat the output from this loader like a normal Javascript
+        module compatible with `babel-loader`.
+  - `cargoWeb`: `boolean` or `object`; use `cargo-web` to compile the project instead of only
+    building a `wasm` module.  Defaults to `false`.
+      - `cargoWeb.name`: `string`; the file name to use for emitting the wasm file for `cargo-web`,
+        e.g. `'static/wasm/[name].[hash:8].wasm'`.
+      - `cargoWeb.regExp`: `string`; a regexp to extract additional variables for use in `name`.
 
 ## Long version
 

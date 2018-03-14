@@ -194,6 +194,6 @@ Set {
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project: errors 1`] = `Array []`;
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project: output 1`] = `""`;
+exports[`rust-native-wasm-loader loads a wasm-bindgen project: output 1`] = `"Hello, World!"`;
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project: warnings 1`] = `Array []`;
