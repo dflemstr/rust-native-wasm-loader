@@ -19,9 +19,9 @@ const DEFAULT_OPTIONS = {
 };
 
 const SUPPORTED_WASM_BINDGEN_VERSION = '^0.1.1';
-const SUPPORTED_CARGO_WEB_VERSION = '^0.6.8';
+const SUPPORTED_CARGO_WEB_VERSION = '^0.6.9';
 
-const loadWasmBindgen = async function (self, {release, target, wasm2es6js, typescript}, srcDir) {
+const loadWasmBindgen = async function (self, {release, target, wasmBindgen}, srcDir) {
   const wasmBindgenVersion = await clapVersion('wasm-bindgen', srcDir);
 
   if (!semver.satisfies(wasmBindgenVersion, SUPPORTED_WASM_BINDGEN_VERSION)) {
@@ -40,20 +40,33 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
   const suffixlessPath = wasmFile.slice(0, -'.wasm'.length);
   const moduleDir = path.dirname(wasmFile);
 
-  await execAsync(
-    `wasm-bindgen ${wasmFile} --out-dir ${moduleDir}${typescript ? ' --typescript --nodejs' : ''}`);
+  const wasmBindgenCmd = ['wasm-bindgen', wasmFile, '--out-dir', moduleDir];
 
-  if (wasm2es6js) {
+  if (wasmBindgen.typescript) {
+    wasmBindgenCmd.push('--typescript');
+  }
+
+  if (wasmBindgen.nodejs) {
+    wasmBindgenCmd.push('--nodejs');
+  }
+
+  if (wasmBindgen.debug) {
+    wasmBindgenCmd.push('--debug');
+  }
+
+  await execAsync(wasmBindgenCmd.join(' '));
+
+  if (wasmBindgen.wasm2es6js) {
     const glueWasmPath = suffixlessPath + '_bg.wasm';
     const glueJsPath = suffixlessPath + '_bg.js';
 
     await execAsync(`wasm2es6js ${glueWasmPath} -o ${glueJsPath} --base64`);
   }
 
-  if (typescript) {
+  if (wasmBindgen.typescript) {
     const tsdPath = suffixlessPath + '.d.ts';
     const jsPath = suffixlessPath + '.js';
-    const wasmPath = suffixlessPath + (wasm2es6js ? '_bg.js' : '_bg.wasm');
+    const wasmPath = suffixlessPath + (wasmBindgen.wasm2es6js ? '_bg.js' : '_bg.wasm');
 
     const jsRequest = loaderUtils.stringifyRequest(self, jsPath);
     const tsdRequest = loaderUtils.stringifyRequest(self, tsdPath);
@@ -63,7 +76,7 @@ const loadWasmBindgen = async function (self, {release, target, wasm2es6js, type
 /// <reference path=${tsdRequest} />
 export * from ${jsRequest};
 `;
-    if (wasm2es6js) {
+    if (wasmBindgen.wasm2es6js) {
       contents += `
 import * as wasm from ${wasmRequest};
 export const wasmBooted: Promise<boolean> = wasm.booted
@@ -72,7 +85,7 @@ export const wasmBooted: Promise<boolean> = wasm.booted
     return contents;
   } else {
     let contents = await fse.readFile(suffixlessPath + '.js', 'utf-8');
-    if (wasm2es6js) {
+    if (wasmBindgen.wasm2es6js) {
       contents += 'export const wasmBooted = wasm.booted\n';
     }
     const wasmImport = suffixlessPath + '_bg';
@@ -83,7 +96,7 @@ export const wasmBooted: Promise<boolean> = wasm.booted
   }
 };
 
-const loadCargoWeb = async function (self, {release, name, target, regExp}, srcDir) {
+const loadCargoWeb = async function (self, {release, target, cargoWeb}, srcDir) {
   const cargoWebVersion = await clapVersion('cargo web', srcDir);
 
   if (!semver.satisfies(cargoWebVersion, SUPPORTED_CARGO_WEB_VERSION)) {
@@ -107,8 +120,8 @@ const loadCargoWeb = async function (self, {release, name, target, regExp}, srcD
   const wasmData = await fse.readFile(wasmFile);
 
   const context = self.context || self.options && self.options.context;
-  const wasmOutFileName = loaderUtils.interpolateName(self, name, {
-    context, content: wasmData, regExp,
+  const wasmOutFileName = loaderUtils.interpolateName(self, cargoWeb.name, {
+    context, content: wasmData, regExp: cargoWeb.regExp,
   });
 
   self.emitFile(wasmOutFileName, wasmData);

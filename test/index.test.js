@@ -75,8 +75,9 @@ describe('rust-native-wasm-loader', () => {
 
     const options = {
       release: true,
-      cargoWeb: true,
-      name: '[name].[hash:8].wasm',
+      cargoWeb: {
+        name: '[name].[hash:8].wasm',
+      },
     };
 
     const stats = await runLoader('stdweb.js', 'stdweb', options);
@@ -89,8 +90,10 @@ describe('rust-native-wasm-loader', () => {
 
     const options = {
       release: true,
-      wasmBindgen: true,
-      wasm2es6js: true,
+      wasmBindgen: {
+        wasm2es6js: true,
+        nodejs: true,
+      },
     };
 
     const stats = await runLoader('wasmbindgen.js', 'wasmbindgen', options, []);
@@ -103,9 +106,11 @@ describe('rust-native-wasm-loader', () => {
 
     const options = {
       release: true,
-      wasmBindgen: true,
-      wasm2es6js: true,
-      typescript: true,
+      wasmBindgen: {
+        wasm2es6js: true,
+        typescript: true,
+        nodejs: true,
+      },
     };
 
     const otherRules = [{
@@ -130,9 +135,11 @@ describe('rust-native-wasm-loader', () => {
 
     const options = {
       release: true,
-      wasmBindgen: true,
-      wasm2es6js: true,
-      typescript: true,
+      wasmBindgen: {
+        wasm2es6js: true,
+        typescript: true,
+        nodejs: true,
+      },
     };
 
     const otherRules = [{
@@ -147,7 +154,8 @@ describe('rust-native-wasm-loader', () => {
       }]
     }];
 
-    const stats = await runLoader('wasmbindgen-type-error.ts', 'wasmbindgen-ts', options, [], otherRules);
+    const stats = await runLoader('wasmbindgen-type-error.ts', 'wasmbindgen-ts', options, [],
+                                  otherRules);
 
     await expectToMatchSnapshot(stats);
   });
@@ -157,9 +165,11 @@ describe('rust-native-wasm-loader', () => {
 
     const options = {
       release: true,
-      wasmBindgen: true,
-      wasm2es6js: true,
-      typescript: true,
+      wasmBindgen: {
+        wasm2es6js: true,
+        typescript: true,
+        nodejs: true,
+      },
     };
 
     const otherRules = [{
@@ -174,7 +184,8 @@ describe('rust-native-wasm-loader', () => {
       }]
     }];
 
-    const stats = await runLoader('wasmbindgen-rust-error.ts', 'wasmbindgen-ts', options, [], otherRules);
+    const stats = await runLoader('wasmbindgen-rust-error.ts', 'wasmbindgen-ts', options, [],
+                                  otherRules);
 
     await expectToMatchSnapshot(stats);
   });
@@ -227,6 +238,7 @@ async function expectToMatchSnapshot(stats) {
         TextDecoder,
         TextEncoder,
         console,
+        process,
         __dirname: path.dirname(assetPath)
       }
     });
