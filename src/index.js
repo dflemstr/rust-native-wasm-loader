@@ -18,7 +18,7 @@ const DEFAULT_OPTIONS = {
   typescript: false,
 };
 
-const SUPPORTED_WASM_BINDGEN_VERSION = '^0.1.1';
+const SUPPORTED_WASM_BINDGEN_VERSION = '^0.2.0';
 const SUPPORTED_CARGO_WEB_VERSION = '^0.6.9';
 
 const loadWasmBindgen = async function (self, {release, target, wasmBindgen}, srcDir) {
@@ -87,6 +87,8 @@ export const wasmBooted: Promise<boolean> = wasm.booted
     let contents = await fse.readFile(suffixlessPath + '.js', 'utf-8');
     if (wasmBindgen.wasm2es6js) {
       contents += 'export const wasmBooted = wasm.booted\n';
+      await fse.remove(suffixlessPath + '_bg.wasm')
+      await fse.remove(suffixlessPath + '.wasm')
     }
     const wasmImport = suffixlessPath + '_bg';
     const includeRequest = loaderUtils.stringifyRequest(self, wasmImport);

@@ -40,8 +40,9 @@ module.exports = {
                 loader: 'rust-native-wasm-loader',
                 options: {
                   release: true,
-                  wasmBindgen: true,
-                  wasm2es6js: true,
+                  wasmBindgen: {
+                    wasm2es6js: true,
+                  },
                 }
               }
             ]

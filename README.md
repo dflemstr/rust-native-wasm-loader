@@ -199,17 +199,18 @@ You can use experimental `wasm-bindgen` support with the following options:
       loader: 'rust-native-wasm-loader',
       options: {
         release: true,
-        wasmBindgen: true,
-        wasm2es6js: true,
+        wasmBindgen: {
+          wasm2es6js: true,
+        },
       }
     }
   ]
 }
 ```
 
-The loader now uses `wasm-bindgen` to build the project.  If you are using webpack 4, you probably
-don't need the `wasm2es6js` flag, but if you are using webpack 3, it is needed in order to inline
-the loading of the wasm file correctly.  The loader now returns a normal Javascript module that can
+The loader now uses `wasm-bindgen` to build the project.  If you are using webpack 4, it has experimental native support for importing WASM files, so you probably
+don't need the `wasm2es6js` flag. If you are using webpack 3 (or bundling for Chrome and it's 4K limit on main thread WASM), it is needed in order to inline
+the loading of the wasm file correctly.  By using `wasm2es6js`, the loader returns a normal Javascript module that can
 be loaded like so:
 
 ```js
@@ -219,8 +220,6 @@ wasmBooted.then(() => {
   console.log('return value was', add(2, 3));
 });
 ```
-
-(The `wasmBooted` promise is not necessary when using webpack 4)
 
 # `cargo-web` experimental support
 
