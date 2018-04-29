@@ -75,20 +75,6 @@ module.exports = {
         minifyURLs: true,
       },
     }),
-    /*new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        comparisons: false,
-      },
-      mangle: {
-        safari10: true,
-      },
-      output: {
-        comments: false,
-        ascii_only: true,
-      },
-      sourceMap: true,
-    }),*/
   ],
   node: {
     dgram: 'empty',

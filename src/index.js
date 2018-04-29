@@ -18,7 +18,7 @@ const DEFAULT_OPTIONS = {
   typescript: false,
 };
 
-const SUPPORTED_WASM_BINDGEN_VERSION = '^0.2.0';
+const SUPPORTED_WASM_BINDGEN_VERSION = '^0.2';
 const SUPPORTED_CARGO_WEB_VERSION = '^0.6.9';
 
 const loadWasmBindgen = async function (self, {release, target, wasmBindgen}, srcDir) {
@@ -55,12 +55,14 @@ const loadWasmBindgen = async function (self, {release, target, wasmBindgen}, sr
   }
 
   await execAsync(wasmBindgenCmd.join(' '));
+  await fse.remove(suffixlessPath + '.wasm')
 
   if (wasmBindgen.wasm2es6js) {
     const glueWasmPath = suffixlessPath + '_bg.wasm';
     const glueJsPath = suffixlessPath + '_bg.js';
 
     await execAsync(`wasm2es6js ${glueWasmPath} -o ${glueJsPath} --base64`);
+    await fse.remove(glueWasmPath)
   }
 
   if (wasmBindgen.typescript) {
@@ -86,14 +88,20 @@ export const wasmBooted: Promise<boolean> = wasm.booted
   } else {
     let contents = await fse.readFile(suffixlessPath + '.js', 'utf-8');
     if (wasmBindgen.wasm2es6js) {
-      contents += 'export const wasmBooted = wasm.booted\n';
-      await fse.remove(suffixlessPath + '_bg.wasm')
-      await fse.remove(suffixlessPath + '.wasm')
+      if(wasmBindgen.nodejs) {
+        contents += 'module.exports.wasmBooted = wasm.booted\n';
+      } else {
+        contents += 'export const wasmBooted = wasm.booted\n';
+      }      
     }
     const wasmImport = suffixlessPath + '_bg';
     const includeRequest = loaderUtils.stringifyRequest(self, wasmImport);
 
-    contents = contents.replace(`from './${path.basename(wasmImport)}'`, `from ${includeRequest}`);
+    if(wasmBindgen.nodejs) {
+      contents = contents.replace(`require('./${path.basename(wasmImport)}')`, `require(${includeRequest})`);
+    } else {
+      contents = contents.replace(`from './${path.basename(wasmImport)}'`, `from ${includeRequest}`);
+    }
     return contents;
   }
 };
