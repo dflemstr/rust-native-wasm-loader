@@ -16,4 +16,4 @@ before_install:
 
 script:
   - travis_wait npm run test
-  - for example in simple advanced-stdweb advanced-wasm-bindgen; do (cd examples/$example; npm install; npm run build); done
+  - for example in simple advanced-stdweb advanced-wasm-bindgen advanced-wasm-bindgen-webpack4 advanced-wasm-bindgen-webpack4-native-wasm; do (cd examples/$example; npm install; npm run build); done
