@@ -7,7 +7,7 @@ import { TextDecoder, TextEncoder } from 'text-encoding';
 
 describe('rust-native-wasm-loader', () => {
   it('loads a simple cargo project', async () => {
-    jest.setTimeout(100000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,
@@ -23,7 +23,7 @@ describe('rust-native-wasm-loader', () => {
   });
 
   it('loads a simple cargo project with warnings', async () => {
-    jest.setTimeout(100000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,
@@ -42,7 +42,7 @@ describe('rust-native-wasm-loader', () => {
   });
 
   it('loads a simple cargo project with errors', async () => {
-    jest.setTimeout(100000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,
@@ -54,7 +54,7 @@ describe('rust-native-wasm-loader', () => {
   });
 
   it('loads a simple cargo project with wasm-gc', async () => {
-    jest.setTimeout(100000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,
@@ -71,7 +71,7 @@ describe('rust-native-wasm-loader', () => {
   });
 
   it('loads a cargo-web project', async () => {
-    jest.setTimeout(100000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,
@@ -86,7 +86,7 @@ describe('rust-native-wasm-loader', () => {
   });
 
   it('loads a wasm-bindgen project', async () => {
-    jest.setTimeout(400000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,
@@ -96,13 +96,13 @@ describe('rust-native-wasm-loader', () => {
       },
     };
 
-    const stats = await runLoader('wasmbindgen.js', 'wasmbindgen', options, []);
+    const stats = await runLoader('wasmbindgen.js', 'wasmbindgen', options);
 
     await expectToMatchSnapshot(stats);
   });
 
   it('loads a wasm-bindgen project with typescript support', async () => {
-    jest.setTimeout(400000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,
@@ -131,7 +131,7 @@ describe('rust-native-wasm-loader', () => {
   });
 
   it('loads a wasm-bindgen project with typescript support and a type error', async () => {
-    jest.setTimeout(400000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,
@@ -161,7 +161,7 @@ describe('rust-native-wasm-loader', () => {
   });
 
   it('loads a wasm-bindgen project with typescript support and a rust error', async () => {
-    jest.setTimeout(400000);
+    jest.setTimeout(600000);
 
     const options = {
       release: true,

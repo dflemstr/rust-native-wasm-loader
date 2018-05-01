@@ -2,43 +2,47 @@
 
 This is an advanced example of calling Rust from a browser.
 
-To try out this example, install Rust, `cargo-web` and Yarn (documented elsewhere) and then run:
+To try out this example, install Rust, `cargo-web`, npm (documented elsewhere), serve (npm i -g serve) and then run:
 
-    yarn install
-    yarn build
+    npm install
+    npm run build
     serve dist
 
 If everything went well, it should print:
 
-    $ yarn install
-    yarn install v1.3.2
-    [1/4] Resolving packages...
-    [2/4] Fetching packages...
-    [3/4] Linking dependencies...
-    [4/4] Building fresh packages...
-    Done in 5.78s.
+    $ npm install
 
-    $ yarn build
-    yarn run v1.3.2
-    $ webpack
-    Hash: 7ecc4c45e3121bb52dc6
-    Version: webpack 3.10.0
-    Time: 1551ms
-                             Asset       Size  Chunks             Chunk Names
-    static/wasm/main.eaa01ab1.wasm    71.6 kB          [emitted]
-        static/js/main.0859a963.js    12.3 kB       0  [emitted]  main
-    static/js/main.0859a963.js.map    78.2 kB       0  [emitted]  main
-                        index.html  469 bytes          [emitted]
-       [0] ./src/index.js 605 bytes {0} [built]
-       [1] ./src/main.rs 12.8 kB {0} [built]
-        + 3 hidden modules
-    Child html-webpack-plugin for "index.html":
-         1 asset
-           [0] ./node_modules/html-webpack-plugin/lib/loader.js!./src/index.html 870 bytes {0} [built]
-           [2] (webpack)/buildin/global.js 509 bytes {0} [built]
-           [3] (webpack)/buildin/module.js 517 bytes {0} [built]
-            + 1 hidden module
-    Done in 2.04s.
+        > uglifyjs-webpack-plugin@0.4.6 postinstall ~/projects/rust-native-wasm-loader/examples/advanced-stdweb/node_modules/uglifyjs-webpack-plugin
+        > node lib/post_install.js
+
+        npm WARN ajv-keywords@3.2.0 requires a peer of ajv@^6.0.0 but none is installed. You must install peer dependencies yourself.
+        npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.2.3 (node_modules/fsevents):
+        npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.3: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
+        added 494 packages in 45.224s
+
+    $ npm run build
+
+        > advanced-stdweb@1.0.0 build ~/projects/rust-native-wasm-loader/examples/advanced-stdweb
+        > webpack
+
+        Hash: dd3893fe5a6613e91472
+        Version: webpack 3.11.0
+        Time: 163874ms
+                                    Asset       Size  Chunks                    Chunk Names
+        f7deecb643855177d18aecfbe8426326.rs     338 kB          [emitted]  [big]  
+                static/js/main.c12fba11.js    14.1 kB       0  [emitted]         main
+            static/js/main.c12fba11.js.map    89.6 kB       0  [emitted]         main
+                                index.html  469 bytes          [emitted]         
+        [1] ./src/index.js 637 bytes {0} [built]
+        [2] ./src/main.rs 15.9 kB {0} [built]
+            + 3 hidden modules
+        Child html-webpack-plugin for "index.html":
+            1 asset
+            [0] ./node_modules/html-webpack-plugin/lib/loader.js!./src/index.html 870 bytes {0} [built]
+            [2] (webpack)/buildin/global.js 509 bytes {0} [built]
+            [3] (webpack)/buildin/module.js 517 bytes {0} [built]
+                + 1 hidden module
 
     $ serve dist
 

@@ -36,7 +36,6 @@ Array [
   |
   = help: the trait \`std::ops::Add<&str>\` is not implemented for \`{integer}\`
 
-If you want more information on this error, try using \\"rustc --explain E0277\\"
 ",
 ]
 `;
@@ -121,16 +120,15 @@ Array [
 
 ",
   "error[E0369]: binary operation \`+\` cannot be applied to type \`&str\`
-  --> src/lib.rs:10:5
-   |
-10 |     a + b
-   |     ^^^^^ \`+\` can't be used to concatenate two \`&str\` strings
+ --> <macro expansion>:1:1
+  |
+1 | pub extern \\"C\\" fn add(a: &str, b: &str) -> String { a + b }
+  | ^^^ \`+\` can't be used to concatenate two \`&str\` strings
 help: \`to_owned()\` can be used to create an owned \`String\` from a string reference. String concatenation appends the string on the right to the string on the left and may require reallocation. This requires ownership of the string on the left
-   |
-10 |     a.to_owned() + b
-   |     ^^^^^^^^^^^^
+  |
+1 | pub.to_owned() extern \\"C\\" fn add(a: &str, b: &str) -> String { a + b }
+  | ^^^^^^^^^^^^^^
 
-If you want more information on this error, try using \\"rustc --explain E0369\\"
 ",
 ]
 `;
@@ -144,6 +142,7 @@ Set {
   "node_modules/@types/node/index.d.ts",
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
+  "node_modules/util/util.js",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
@@ -168,6 +167,7 @@ Set {
   "node_modules/@types/node/index.d.ts",
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
+  "node_modules/util/util.js",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
