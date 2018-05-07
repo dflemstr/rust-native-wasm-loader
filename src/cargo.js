@@ -1,6 +1,18 @@
 import { BuildError } from './error';
+import { reverseString } from './util';
 import fse from 'fs-extra';
 import path from 'path';
+
+export const parseDependencies = (data, baseFile) =>
+  data
+    .split('\n')
+    .filter(str => str.startsWith(baseFile))
+    .map(str => str.slice(str.indexOf(': ') + 2))
+    .map(reverseString)
+    .map(str => str.split(/(?: (?!\\))+/))
+    .reduce((allDeps, lineDeps) => [...allDeps, ...lineDeps], [])
+    .map(reverseString)
+    .map(str => str.replace(/\\ /g, ' '));
 
 export const findSrcDir = async function (childPath) {
   let candidate = childPath;
@@ -72,12 +84,10 @@ export const handleCargo = async function (self, result) {
 
   const depFile = wasmFile.slice(0, -'.wasm'.length) + '.d';
   const depContents = await fse.readFile(depFile, 'utf-8');
-  for (let line of depContents.split('\n')) {
-    if (line.startsWith(wasmFile) || (jsFile && line.startsWith(jsFile))) {
-      for (let dep of line.split(/:\s+/)[1].split(/\s+/)) {
-        self.addDependency(dep);
-      }
-    }
+  const deps = parseDependencies(depContents, wasmFile.replace(/ /g, '\\ '));
+
+  for (let dep of deps) {
+    self.addDependency(dep);
   }
 
   return {wasmFile, jsFile};
