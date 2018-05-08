@@ -6,10 +6,10 @@ import path from 'path';
 export const parseDependencies = (data, baseFile) =>
   data
     .split('\n')
-    .filter(str => str.startsWith(baseFile))
+    .filter(str => str.startsWith(baseFile.replace(/ /g, '\\ ')))
     .map(str => str.slice(str.indexOf(': ') + 2))
     .map(reverseString)
-    .map(str => str.split(/(?: (?!\\))+/))
+    .map(str => str.split(/(?: (?!\\))/))
     .reduce((allDeps, lineDeps) => [...allDeps, ...lineDeps], [])
     .map(reverseString)
     .map(str => str.replace(/\\ /g, ' '));
@@ -84,7 +84,7 @@ export const handleCargo = async function (self, result) {
 
   const depFile = wasmFile.slice(0, -'.wasm'.length) + '.d';
   const depContents = await fse.readFile(depFile, 'utf-8');
-  const deps = parseDependencies(depContents, wasmFile.replace(/ /g, '\\ '));
+  const deps = parseDependencies(depContents, wasmFile);
 
   for (let dep of deps) {
     self.addDependency(dep);
