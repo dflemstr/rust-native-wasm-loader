@@ -15,3 +15,5 @@ export const execPermissive = async function (cmd, srcDir) {
 export const clapVersion = async function (tool, srcDir) {
   return (await execPermissive(`${tool} --version`, srcDir)).stdout.split(' ').slice(-1)[0].trim();
 };
+
+export const reverseString = str => str.split('').reverse().join('');
