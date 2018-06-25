@@ -86,21 +86,21 @@ export const wasmBooted: Promise<boolean> = wasm.booted
     }
     return contents;
   } else {
-    let contents = await fse.readFile(suffixlessPath + '.js', 'utf-8');
-    if (wasmBindgen.wasm2es6js) {
-      if(wasmBindgen.nodejs) {
-        contents += 'module.exports.wasmBooted = wasm.booted\n';
-      } else {
-        contents += 'export const wasmBooted = wasm.booted\n';
-      }      
-    }
-    const wasmImport = suffixlessPath + '_bg';
-    const includeRequest = loaderUtils.stringifyRequest(self, wasmImport);
-
-    if(wasmBindgen.nodejs) {
-      contents = contents.replace(`require('./${path.basename(wasmImport)}')`, `require(${includeRequest})`);
+    const jsRequest = loaderUtils.stringifyRequest(self, suffixlessPath + '.js');
+    let contents = '';
+    if (wasmBindgen.nodejs) {
+      contents += `module.exports = require(${jsRequest});\n`;
     } else {
-      contents = contents.replace(`from './${path.basename(wasmImport)}'`, `from ${includeRequest}`);
+      contents += `export * from ${jsRequest};\n`;
+    }
+    if (wasmBindgen.wasm2es6js) {
+      const wasmImport = suffixlessPath + '_bg';
+      const wasmRequest = loaderUtils.stringifyRequest(self, wasmImport);
+      if (wasmBindgen.nodejs) {
+        contents += `module.exports.wasmBooted = require(${wasmRequest}).booted\n`;
+      } else {
+        contents += `export {booted as wasmBooted} from ${wasmRequest};\n`;
+      }
     }
     return contents;
   }
