@@ -43,7 +43,18 @@ export const cargoCommand = (target, release, subcmd = []) => {
   return cmd.join(' ');
 };
 
-export const handleCargo = async function (self, result) {
+export const handleCargo = async (self, result) => {
+  // result seems to not have a code, when the compilations succeeds, so we'll
+  // have to check existence first
+  if (result.code && result.code !== 0) {
+    throw makeCargoError(result);
+  }
+  else {
+    return handleCargoSuccess(self, result);
+  }
+};
+
+const handleCargoSuccess = async function (self, result) {
   let wasmFile;
   let jsFile;
   let hasError = false;
@@ -91,4 +102,12 @@ export const handleCargo = async function (self, result) {
   }
 
   return {wasmFile, jsFile};
+};
+
+const makeCargoError = result => {
+  const tmpl = `Cargo encountered an error while compiling your crate
+${result.stderr}`;
+  const e = new Error(tmpl);
+  e.name = "CargoError";
+  return e;
 };

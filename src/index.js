@@ -32,11 +32,8 @@ const loadWasmBindgen = async function (self, {release, target, wasmBindgen}, sr
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
-  const {wasmFile} = await handleCargo(self, result);
+  const { wasmFile } = await handleCargo(self, result);
 
-  if (!wasmFile) {
-    throw new BuildError('No wasm file produced as build output');
-  }
   const suffixlessPath = wasmFile.slice(0, -'.wasm'.length);
   const moduleDir = path.dirname(wasmFile);
 
@@ -117,14 +114,7 @@ const loadCargoWeb = async function (self, {release, target, cargoWeb}, srcDir) 
   const cmd = cargoCommand(target, release, ['web']);
   const result = await execPermissive(cmd, srcDir);
 
-  const {wasmFile, jsFile} = await handleCargo(self, result);
-
-  if (!wasmFile) {
-    throw new BuildError('No wasm file produced as build output');
-  }
-  if (!jsFile) {
-    throw new BuildError('No js file produced as build output');
-  }
+  const { wasmFile, jsFile } = await handleCargo(self, result);
 
   const jsData = await fse.readFile(jsFile, 'utf-8');
   const wasmData = await fse.readFile(wasmFile);
@@ -148,11 +138,7 @@ const loadRaw = async function (self, {release, gc, target}, srcDir) {
   const cmd = cargoCommand(target, release);
   const result = await execPermissive(cmd, srcDir);
 
-  let {wasmFile} = await handleCargo(self, result);
-
-  if (!wasmFile) {
-    throw new BuildError('No wasm file produced as build output');
-  }
+  let { wasmFile } = await handleCargo(self, result);
 
   if (gc) {
     let gcWasmFile = wasmFile.substr(0, wasmFile.length - '.wasm'.length) + '.gc.wasm';
