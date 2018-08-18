@@ -208,6 +208,18 @@ You can use experimental `wasm-bindgen` support with the following options:
 }
 ```
 
+and edit your `lib.rs`:
+
+```rust
+extern crate wasm_bindgen;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+```
+
 The loader now uses `wasm-bindgen` to build the project.  If you are using webpack 4, it has experimental native support for importing WASM files, so you probably
 don't need the `wasm2es6js` flag. If you are using webpack 3 (or bundling for Chrome and it's 4K limit on main thread WASM), it is needed in order to inline
 the loading of the wasm file correctly.  By using `wasm2es6js`, the loader returns a normal Javascript module that can
