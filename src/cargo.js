@@ -54,6 +54,7 @@ export const handleCargo = async function (self, result) {
     const data = JSON.parse(line);
     switch (data.reason) {
       case 'compiler-message':
+      case 'message':
         switch (data.message.level) {
           case 'warning':
             self.emitWarning(new Error(data.message.rendered));
@@ -78,16 +79,22 @@ export const handleCargo = async function (self, result) {
     }
   }
 
+  if (result.code) {
+    throw new BuildError(result);
+  }
+
   if (hasError) {
     throw new BuildError('Cargo build failed');
   }
 
-  const depFile = wasmFile.slice(0, -'.wasm'.length) + '.d';
-  const depContents = await fse.readFile(depFile, 'utf-8');
-  const deps = parseDependencies(depContents, wasmFile);
+  if (wasmFile) {
+    const depFile = wasmFile.slice(0, -'.wasm'.length) + '.d';
+    const depContents = await fse.readFile(depFile, 'utf-8');
+    const deps = parseDependencies(depContents, wasmFile);
 
-  for (let dep of deps) {
-    self.addDependency(dep);
+    for (let dep of deps) {
+      self.addDependency(dep);
+    }
   }
 
   return {wasmFile, jsFile};

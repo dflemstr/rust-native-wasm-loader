@@ -24,7 +24,13 @@ Set {
 
 exports[`rust-native-wasm-loader loads a simple cargo project with errors: errors 1`] = `
 Array [
-  "Module build failed: BuildError: Cargo build failed",
+  "Module build failed: BuildError: Error: Command failed: cargo build --message-format=json --target=wasm32-unknown-unknown --release
+   Compiling myerrorlib v0.1.0 (file://test/fixtures/myerrorlib)
+error: Could not compile \`myerrorlib\`.
+
+Caused by:
+  process didn't exit successfully: \`rustc --crate-name myerrorlib src/lib.rs --error-format json --crate-type cdylib --emit=dep-info,link -C opt-level=3 -C metadata=204ae3df9e4f5f06 --out-dir test/fixtures/myerrorlib/target/wasm32-unknown-unknown/release/deps --target wasm32-unknown-unknown -C linker=lld -L dependency=test/fixtures/myerrorlib/target/wasm32-unknown-unknown/release/deps -L dependency=test/fixtures/myerrorlib/target/release/deps\` (exit code: 101)
+",
   "error: aborting due to previous error
 
 ",
@@ -40,7 +46,7 @@ Array [
 ]
 `;
 
-exports[`rust-native-wasm-loader loads a simple cargo project with errors: failure 1`] = `"Module build failed: BuildError: Cargo build failed"`;
+exports[`rust-native-wasm-loader loads a simple cargo project with errors: failure 1`] = `"Module build failed: BuildError: Error: Command failed: cargo build --message-format=json --target=wasm32-unknown-unknown --release"`;
 
 exports[`rust-native-wasm-loader loads a simple cargo project with errors: warnings 1`] = `Array []`;
 
