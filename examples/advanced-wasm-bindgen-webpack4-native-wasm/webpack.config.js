@@ -31,12 +31,6 @@ module.exports = {
             test: /\.rs$/,
             use: [
               {
-                loader: 'babel-loader',
-                options: {
-                  compact: true,
-                }
-              },
-              {
                 loader: 'rust-native-wasm-loader',
                 options: {
                   release: true,
