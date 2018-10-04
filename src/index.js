@@ -20,9 +20,11 @@ const DEFAULT_OPTIONS = {
 
 const SUPPORTED_WASM_BINDGEN_VERSION = '^0.2';
 const SUPPORTED_CARGO_WEB_VERSION = '^0.6.9';
+const MIN_WEBPACK_NATIVE_WASM_VERSION = '^4.0.0';
 
 const loadWasmBindgen = async function (self, {release, target, wasmBindgen}, srcDir) {
   const wasmBindgenVersion = await clapVersion('wasm-bindgen', srcDir);
+  const webpackVersion = await clapVersion('npx webpack', srcDir);
 
   if (!semver.satisfies(wasmBindgenVersion, SUPPORTED_WASM_BINDGEN_VERSION)) {
     throw new BuildError(
@@ -85,6 +87,13 @@ export const wasmBooted: Promise<boolean> = wasm.booted
 `;
     }
     return contents;
+  } else if (!wasmBindgen.wasm2es6js && semver.satisfies(webpackVersion, MIN_WEBPACK_NATIVE_WASM_VERSION)) {
+    const jsRequest = loaderUtils.stringifyRequest(self, suffixlessPath + '.js');
+
+    return `module.exports.wasmBooted = import(${jsRequest}).then(wasmModule => {
+      const keys = Object.keys(wasmModule);
+      for (let key of keys) module.exports[key] = wasmModule[key];
+    })`;
   } else {
     const jsRequest = loaderUtils.stringifyRequest(self, suffixlessPath + '.js');
     let contents = '';
