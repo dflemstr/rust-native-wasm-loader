@@ -105,6 +105,13 @@ cargo init add
 cd add
 ```
 
+If nightly is not your system default toolchain, create a file named `rust-toolchain` containing
+the toolchain name you want to associate with the project:
+
+```
+echo nightly > rust-toolchain
+```
+
 We can add the Rust code that should be available in the WebAssembly module to `src/lib.rs`.  All
 functions that should be reachable from WebAssembly should be marked with `#[no_mangle]`:
 
