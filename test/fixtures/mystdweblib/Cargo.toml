@@ -4,4 +4,4 @@ name = "mystdweblib"
 version = "0.1.0"
 
 [dependencies]
-stdweb = "0.4.1"
+stdweb = "0.4.9"

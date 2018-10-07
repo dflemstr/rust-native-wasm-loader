@@ -196,7 +196,7 @@ function removeCWD(str) {
 }
 
 function cleanErrorStack(error) {
-  return removeCWD(error.message).split('\n').filter(l => !l.match(/^\s+at\s/)).join('\n');
+  return removeCWD(error.message.toString()).split('\n').filter(l => !l.match(/^\s+at\s/)).join('\n');
 }
 
 function collectDependencies(dependencies, obj) {
