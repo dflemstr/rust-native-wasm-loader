@@ -25,11 +25,10 @@ Set {
 exports[`rust-native-wasm-loader loads a simple cargo project with errors: errors 1`] = `
 Array [
   "Module build failed: BuildError: Error: Command failed: cargo build --message-format=json --target=wasm32-unknown-unknown --release
-   Compiling myerrorlib v0.1.0 (file://test/fixtures/myerrorlib)
+   Compiling myerrorlib v0.1.0 (test/fixtures/myerrorlib)
 error: Could not compile \`myerrorlib\`.
 
-Caused by:
-  process didn't exit successfully: \`rustc --crate-name myerrorlib src/lib.rs --error-format json --crate-type cdylib --emit=dep-info,link -C opt-level=3 -C metadata=204ae3df9e4f5f06 --out-dir test/fixtures/myerrorlib/target/wasm32-unknown-unknown/release/deps --target wasm32-unknown-unknown -C linker=lld -L dependency=test/fixtures/myerrorlib/target/wasm32-unknown-unknown/release/deps -L dependency=test/fixtures/myerrorlib/target/release/deps\` (exit code: 101)
+To learn more, run the command again with --verbose.
 ",
   "error: aborting due to previous error
 
@@ -112,34 +111,36 @@ Set {
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
   "test/fixtures/mywasmbindgenerrorlib/src/lib.rs",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
   "test/fixtures/wasmbindgen-rust-error.ts",
 }
 `;
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: errors 1`] = `
 Array [
+  "[tsl] ERROR in test/fixtures/mywasmbindgenerrorlib/src/lib.rs.ts(1,17)
+      TS2345: Argument of type '{ \\"killed\\": boolean; \\"code\\": number; \\"signal\\": null; \\"cmd\\": string; \\"stdout\\": string; \\"stderr\\": s...' is not assignable to parameter of type 'string'.",
   "[tsl] ERROR in test/fixtures/wasmbindgen-rust-error.ts(1,33)
       TS2306: File 'test/fixtures/mywasmbindgenerrorlib/src/lib.rs.ts' is not a module.",
-  "Cargo build failed",
+  "Error: Command failed: cargo build --message-format=json --target=wasm32-unknown-unknown --release
+   Compiling mywasmbindgenerrorlib v0.1.0 (test/fixtures/mywasmbindgenerrorlib)
+error: Could not compile \`mywasmbindgenerrorlib\`.
+
+To learn more, run the command again with --verbose.
+",
   "error: aborting due to previous error
 
 ",
   "error[E0369]: binary operation \`+\` cannot be applied to type \`&str\`
- --> <macro expansion>:1:1
-  |
-1 | pub extern \\"C\\" fn add(a: &str, b: &str) -> String { a + b }
-  | ^^^ \`+\` can't be used to concatenate two \`&str\` strings
 help: \`to_owned()\` can be used to create an owned \`String\` from a string reference. String concatenation appends the string on the right to the string on the left and may require reallocation. This requires ownership of the string on the left
   |
-1 | pub.to_owned() extern \\"C\\" fn add(a: &str, b: &str) -> String { a + b }
-  | ^^^^^^^^^^^^^^
+1 | .to_owned()#![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  | ^^^^^^^^^^^
 
 ",
 ]
 `;
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: failure 1`] = `"Cargo build failed"`;
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: failure 1`] = `"[object Object]"`;
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a rust error: warnings 1`] = `Array []`;
 
@@ -148,58 +149,165 @@ Set {
   "node_modules/@types/node/index.d.ts",
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
-  "node_modules/util/util.js",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_bg.js",
   "test/fixtures/wasmbindgen-type-error.ts",
 }
 `;
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: errors 1`] = `
 Array [
-  "[tsl] ERROR in test/fixtures/wasmbindgen-type-error.ts(5,10)
-      TS2554: Expected 2 arguments, but got 3.",
+  "[tsl] ERROR in test/fixtures/mywasmbindgenlib/src/lib.rs.ts(1,17)
+      TS2345: Argument of type '{ \\"killed\\": boolean; \\"code\\": number; \\"signal\\": null; \\"cmd\\": string; \\"stdout\\": string; \\"stderr\\": s...' is not assignable to parameter of type 'string'.",
+  "[tsl] ERROR in test/fixtures/wasmbindgen-type-error.ts(1,33)
+      TS2306: File 'test/fixtures/mywasmbindgenlib/src/lib.rs.ts' is not a module.",
+  "Error: Command failed: cargo build --message-format=json --target=wasm32-unknown-unknown --release
+   Compiling mywasmbindgenlib v0.1.0 (test/fixtures/mywasmbindgenlib)
+error: Could not compile \`mywasmbindgenlib\`.
+
+To learn more, run the command again with --verbose.
+",
+  "error: aborting due to 2 previous errors
+
+",
+  "error[E0635]: unknown feature \`wasm_custom_section\`
+ --> src/lib.rs:1:24
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |                        ^^^^^^^^^^^^^^^^^^^
+
+",
+  "error[E0635]: unknown feature \`wasm_import_module\`
+ --> src/lib.rs:1:45
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |                                             ^^^^^^^^^^^^^^^^^^
+
+",
 ]
 `;
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: output 1`] = `"Hello, World!"`;
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: failure 1`] = `"[object Object]"`;
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: warnings 1`] = `Array []`;
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support and a type error: warnings 1`] = `
+Array [
+  "warning: the feature \`proc_macro\` has been stable since 1.29.0 and no longer requires an attribute to enable
+ --> src/lib.rs:1:12
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |            ^^^^^^^^^^
+  |
+  = note: #[warn(stable_features)] on by default
+
+",
+]
+`;
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: dependencies 1`] = `
 Set {
   "node_modules/@types/node/index.d.ts",
   "node_modules/@types/node/inspector.d.ts",
   "node_modules/typescript/lib/lib.d.ts",
-  "node_modules/util/util.js",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.d.ts",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_bg.js",
   "test/fixtures/wasmbindgen.ts",
 }
 `;
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: errors 1`] = `Array []`;
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: errors 1`] = `
+Array [
+  "[tsl] ERROR in test/fixtures/mywasmbindgenlib/src/lib.rs.ts(1,17)
+      TS2345: Argument of type '{ \\"killed\\": boolean; \\"code\\": number; \\"signal\\": null; \\"cmd\\": string; \\"stdout\\": string; \\"stderr\\": s...' is not assignable to parameter of type 'string'.",
+  "[tsl] ERROR in test/fixtures/wasmbindgen.ts(1,33)
+      TS2306: File 'test/fixtures/mywasmbindgenlib/src/lib.rs.ts' is not a module.",
+  "Error: Command failed: cargo build --message-format=json --target=wasm32-unknown-unknown --release
+   Compiling mywasmbindgenlib v0.1.0 (test/fixtures/mywasmbindgenlib)
+error: Could not compile \`mywasmbindgenlib\`.
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: output 1`] = `"Hello, World!"`;
+To learn more, run the command again with --verbose.
+",
+  "error: aborting due to 2 previous errors
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: warnings 1`] = `Array []`;
+",
+  "error[E0635]: unknown feature \`wasm_custom_section\`
+ --> src/lib.rs:1:24
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |                        ^^^^^^^^^^^^^^^^^^^
+
+",
+  "error[E0635]: unknown feature \`wasm_import_module\`
+ --> src/lib.rs:1:45
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |                                             ^^^^^^^^^^^^^^^^^^
+
+",
+]
+`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: failure 1`] = `"[object Object]"`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project with typescript support: warnings 1`] = `
+Array [
+  "warning: the feature \`proc_macro\` has been stable since 1.29.0 and no longer requires an attribute to enable
+ --> src/lib.rs:1:12
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |            ^^^^^^^^^^
+  |
+  = note: #[warn(stable_features)] on by default
+
+",
+]
+`;
 
 exports[`rust-native-wasm-loader loads a wasm-bindgen project: dependencies 1`] = `
 Set {
   "test/fixtures/mywasmbindgenlib/Cargo.toml",
   "test/fixtures/mywasmbindgenlib/src/lib.rs",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib.js",
-  "test/fixtures/mywasmbindgenlib/target/wasm32-unknown-unknown/release/mywasmbindgenlib_bg.js",
   "test/fixtures/wasmbindgen.js",
 }
 `;
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project: errors 1`] = `Array []`;
+exports[`rust-native-wasm-loader loads a wasm-bindgen project: errors 1`] = `
+Array [
+  "Error: Command failed: cargo build --message-format=json --target=wasm32-unknown-unknown --release
+   Compiling mywasmbindgenlib v0.1.0 (test/fixtures/mywasmbindgenlib)
+error: Could not compile \`mywasmbindgenlib\`.
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project: output 1`] = `"Hello, World!"`;
+To learn more, run the command again with --verbose.
+",
+  "error: aborting due to 2 previous errors
 
-exports[`rust-native-wasm-loader loads a wasm-bindgen project: warnings 1`] = `Array []`;
+",
+  "error[E0635]: unknown feature \`wasm_custom_section\`
+ --> src/lib.rs:1:24
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |                        ^^^^^^^^^^^^^^^^^^^
+
+",
+  "error[E0635]: unknown feature \`wasm_import_module\`
+ --> src/lib.rs:1:45
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |                                             ^^^^^^^^^^^^^^^^^^
+
+",
+]
+`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project: failure 1`] = `"[object Object]"`;
+
+exports[`rust-native-wasm-loader loads a wasm-bindgen project: warnings 1`] = `
+Array [
+  "warning: the feature \`proc_macro\` has been stable since 1.29.0 and no longer requires an attribute to enable
+ --> src/lib.rs:1:12
+  |
+1 | #![feature(proc_macro, wasm_custom_section, wasm_import_module)]
+  |            ^^^^^^^^^^
+  |
+  = note: #[warn(stable_features)] on by default
+
+",
+]
+`;

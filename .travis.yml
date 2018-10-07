@@ -8,11 +8,11 @@ cache:
 
 before_install:
   - export PATH="$HOME/.cargo/bin:$PATH"
-  - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2018-04-18
-  - rustup target add wasm32-unknown-unknown --toolchain nightly-2018-04-18
-  - CARGO_TARGET_DIR=.cargo-install cargo install cargo-web --vers 0.6.9
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2018-10-06
+  - rustup target add wasm32-unknown-unknown --toolchain nightly-2018-10-06
+  - CARGO_TARGET_DIR=.cargo-install cargo install cargo-web --vers 0.6.16
   - CARGO_TARGET_DIR=.cargo-install cargo install wasm-gc --vers 0.1.1
-  - CARGO_TARGET_DIR=.cargo-install cargo install wasm-bindgen-cli --vers 0.2.7
+  - CARGO_TARGET_DIR=.cargo-install cargo install wasm-bindgen-cli --vers 0.2.24
 
 script:
   - travis_wait npm run test

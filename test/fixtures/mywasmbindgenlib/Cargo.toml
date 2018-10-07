@@ -4,7 +4,7 @@ name = "mywasmbindgenlib"
 version = "0.1.0"
 
 [dependencies]
-wasm-bindgen = "0.2.7"
+wasm-bindgen = "0.2.24"
 
 [lib]
 crate-type = ["cdylib"]
